@@ -1,22 +1,32 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { Trash2, Plus, Edit2 } from 'lucide-react';
+import { 
+  createTask, 
+  updateTask, 
+  deleteTask as deleteTaskAPI, 
+  createEvent, 
+  updateEvent, 
+  deleteEvent as deleteEventAPI 
+} from '../api/tasks';
 
 /**
  * EventsPage
  * React (JavaScript) version of the TypeScript sample provided by the user.
  * Props:
- * - tasks: array of task objects { id, description, startDate, endDate, isCompleted }
+ * - tasks: array of task objects { _id, description, startDate, endDate, isCompleted }
  * - setTasks: setter for tasks state
- * - events: array of event objects { id, description, date }
+ * - events: array of event objects { _id, title, event, date }
  * - setEvents: setter for events state
+ * - onTasksUpdate: callback to refresh tasks from backend
+ * - onEventsUpdate: callback to refresh events from backend
  *
  * Features:
- * - Add / delete tasks and events
+ * - Add / delete tasks and events with backend integration
  * - Toggle task completion
  * - Group tasks by start/end date and show completion progress
  * - Optional desktop notification scheduling (request permission and schedule timeouts)
  */
-const EventsPage = ({ tasks, setTasks, events, setEvents }) => {
+const EventsPage = ({ tasks, setTasks, events, setEvents, onTasksUpdate, onEventsUpdate }) => {
   // Local form state
   const [taskDesc, setTaskDesc] = useState('');
   const [taskStart, setTaskStart] = useState('');
@@ -82,54 +92,120 @@ const EventsPage = ({ tasks, setTasks, events, setEvents }) => {
   };
 
   // Task handlers
-  const handleAddTask = (e) => {
+  const handleAddTask = async (e) => {
     e.preventDefault();
     if (!taskDesc || !taskStart || !taskEnd) return;
-    const newTask = {
-      id: Date.now(),
-      description: taskDesc,
-      startDate: taskStart,
-      endDate: taskEnd,
-      isCompleted: false,
-    };
-    setTasks([...tasks, newTask]);
-    setTaskDesc('');
-    setTaskStart('');
-    setTaskEnd('');
+    
+    try {
+      await createTask({
+        description: taskDesc,
+        startDate: taskStart,
+        endDate: taskEnd,
+      });
+      
+      // Refresh tasks from backend
+      if (onTasksUpdate) await onTasksUpdate();
+      
+      // Clear form
+      setTaskDesc('');
+      setTaskStart('');
+      setTaskEnd('');
+    } catch (error) {
+      console.error('Error creating task:', error);
+      console.error('Task creation error response:', error.response?.data);
+      alert(`Failed to create task: ${error.response?.data?.message || error.message}`);
+    }
   };
 
-  const toggleTaskCompletion = (id) => {
-    setTasks(tasks.map((t) => (t.id === id ? { ...t, isCompleted: !t.isCompleted } : t)));
+  const toggleTaskCompletion = async (id) => {
+    const task = tasks.find(t => t._id === id);
+    if (!task) return;
+    
+    try {
+      await updateTask(id, {
+        description: task.description,
+        startDate: task.startDate,
+        endDate: task.endDate,
+        isCompleted: !task.isCompleted,
+      });
+      
+      // Refresh tasks from backend
+      if (onTasksUpdate) await onTasksUpdate();
+    } catch (error) {
+      console.error('Error updating task:', error);
+      console.error('Task update error response:', error.response?.data);
+      alert(`Failed to update task: ${error.response?.data?.message || error.message}`);
+    }
   };
 
-  const deleteTask = (id) => setTasks(tasks.filter((t) => t.id !== id));
+  const deleteTask = async (id) => {
+    try {
+      await deleteTaskAPI(id);
+      
+      // Refresh tasks from backend
+      if (onTasksUpdate) await onTasksUpdate();
+    } catch (error) {
+      console.error('Error deleting task:', error);
+      console.error('Task delete error response:', error.response?.data);
+      alert(`Failed to delete task: ${error.response?.data?.message || error.message}`);
+    }
+  };
 
   // Event handlers
-  const handleAddEvent = (e) => {
+  const handleAddEvent = async (e) => {
     e.preventDefault();
     if (!eventDesc || !eventDate) return;
 
-    if (editingId) {
-      // Update existing event
-      const updated = events.map((ev) => (ev.id === editingId ? { ...ev, description: eventDesc, date: eventDate } : ev));
-      setEvents(updated.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()));
-      setEditingId(null);
-    } else {
-      const newEvent = { id: Date.now(), description: eventDesc, date: eventDate };
-      // keep events sorted by date
-      setEvents([...events, newEvent].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()));
+    try {
+      if (editingId) {
+        // Update existing event
+        await updateEvent(editingId, {
+          title: eventDesc,
+          event: eventDesc,
+          date: eventDate,
+        });
+        setEditingId(null);
+      } else {
+        // Create new event
+        await createEvent({
+          title: eventDesc,
+          event: eventDesc,
+          date: eventDate,
+        });
+      }
+      
+      // Refresh events from backend
+      if (onEventsUpdate) await onEventsUpdate();
+      
+      // Clear form
+      setEventDesc('');
+      setEventDate('');
+    } catch (error) {
+      console.error('Error saving event:', error);
+      console.error('Event error response:', error.response?.data);
+      console.error('Event error status:', error.response?.status);
+      alert(`Failed to save event: ${error.response?.data?.message || error.message}`);
     }
-    setEventDesc('');
-    setEventDate('');
   };
 
-  const deleteEvent = (id) => setEvents(events.filter((ev) => ev.id !== id));
+  const deleteEvent = async (id) => {
+    try {
+      await deleteEventAPI(id);
+      
+      // Refresh events from backend
+      if (onEventsUpdate) await onEventsUpdate();
+    } catch (error) {
+      console.error('Error deleting event:', error);
+      console.error('Delete event error response:', error.response?.data);
+      alert(`Failed to delete event: ${error.response?.data?.message || error.message}`);
+    }
+  };
 
   const handleEditEvent = (id) => {
-    const ev = events.find((x) => x.id === id);
+    const ev = events.find((x) => x._id === id);
     if (!ev) return;
     setEditingId(id);
-    setEventDesc(ev.description || '');
+    setEventDesc(ev.event || ev.title || '');
     setEventDate(ev.date || '');
   };
 
@@ -199,12 +275,12 @@ const EventsPage = ({ tasks, setTasks, events, setEvents }) => {
                 </div>
                 <div className="space-y-3">
                   {group.tasks.map((task) => (
-                    <div key={task.id} className="bg-bg-2 p-3 rounded-lg flex items-center justify-between">
+                    <div key={task._id} className="bg-bg-2 p-3 rounded-lg flex items-center justify-between">
                       <div className="flex items-center gap-4">
-                        <input type="checkbox" checked={!!task.isCompleted} onChange={() => toggleTaskCompletion(task.id)} className="h-5 w-5 rounded text-indigo-600 focus:ring-indigo-500 bg-bg-top border-bg-2" />
+                        <input type="checkbox" checked={!!task.isCompleted} onChange={() => toggleTaskCompletion(task._id)} className="h-5 w-5 rounded text-indigo-600 focus:ring-indigo-500 bg-bg-top border-bg-2" />
                         <p className={`font-semibold ${task.isCompleted ? 'line-through text-gray-400' : ''}`}>{task.description}</p>
                       </div>
-                      <button onClick={() => deleteTask(task.id)} className="text-red-400 hover:text-red-600 transition-colors">
+                      <button onClick={() => deleteTask(task._id)} className="text-red-400 hover:text-red-600 transition-colors">
                         <Trash2 className="w-6 h-6" />
                       </button>
                     </div>
@@ -258,16 +334,17 @@ const EventsPage = ({ tasks, setTasks, events, setEvents }) => {
 
         <div className="space-y-3">
           {events.map((ev) => (
-            <div key={ev.id} className="bg-bg-2 p-3 rounded-lg flex items-center justify-between">
-              <div className="cursor-pointer" onClick={() => handleEditEvent(ev.id)}>
-                <p className="font-semibold">{ev.description}</p>
+            <div key={ev._id} className="bg-bg-2 p-3 rounded-lg flex items-center justify-between">
+              <div className="cursor-pointer" onClick={() => handleEditEvent(ev._id)}>
+                <p className="font-semibold">{ev.title}</p>
+                <p className="text-sm text-gray-300">{ev.event}</p>
                 <p className="text-sm text-gray-400">{new Date(ev.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' })}</p>
               </div>
               <div className="flex items-center gap-3">
-                <button onClick={() => handleEditEvent(ev.id)} className="text-gray-300 hover:text-white transition-colors">
+                <button onClick={() => handleEditEvent(ev._id)} className="text-gray-300 hover:text-white transition-colors">
                   <Edit2 className="w-5 h-5" />
                 </button>
-                <button onClick={() => deleteEvent(ev.id)} className="text-red-400 hover:text-red-600 transition-colors">
+                <button onClick={() => deleteEvent(ev._id)} className="text-red-400 hover:text-red-600 transition-colors">
                   <Trash2 className="w-6 h-6" />
                 </button>
               </div>

@@ -4,6 +4,7 @@ import cors from "cors";
 import { connectDB } from "./conf/database.js";
 import authRoutes from "./routes/auth.routes.js";
 import eventRoutes from "./routes/event.routes.js";
+import taskRoutes from "./routes/task.routes.js";
 import cookieParser from "cookie-parser";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -32,6 +33,7 @@ app.use(
 // reset API Routes reset
 app.use("/api/auth", authRoutes);
 app.use("/api/event", authMiddleware, eventRoutes);
+app.use("/api/task", authMiddleware, taskRoutes);
 
 const frontendPath = path.join(__dirname, "../frontend/dist");
 app.use(express.static(frontendPath));

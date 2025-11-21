@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from "react";
-import API from "../api/axios";
 import { Navbar, EventsPage } from "../components/index.components";
+import { getTasks, getEvents } from "../api/tasks";
 
-// Local tasks state will be managed here and passed to EventsPage
+// State management for tasks and events with backend integration
 
 function Events() {
   const [events, setEvents] = useState([]);
   const [tasks, setTasks] = useState([]);
-  const getEvents = async () => {
+  const [loading, setLoading] = useState(true);
+
+  const fetchEvents = async () => {
     try {
-      const { data } = await API.get("/event/getEvents");
-      setEvents(data.events || []);
+      const response = await getEvents();
+      setEvents(response.events || []);
     } catch (error) {
       console.error(
         "Event fetch Error:",
@@ -19,8 +21,26 @@ function Events() {
     }
   };
 
+  const fetchTasks = async () => {
+    try {
+      const response = await getTasks();
+      setTasks(response.tasks || []);
+    } catch (error) {
+      console.error(
+        "Task fetch Error:",
+        error.response?.data || error.message
+      );
+    }
+  };
+
+  const loadData = async () => {
+    setLoading(true);
+    await Promise.all([fetchEvents(), fetchTasks()]);
+    setLoading(false);
+  };
+
   useEffect(() => {
-    getEvents();
+    loadData();
   }, []);
   return (
     // Root grid: fixed to viewport. Use two columns (sidebar + main) since right panel removed.
@@ -30,7 +50,20 @@ function Events() {
       {/* Main center: make this column scrollable and constrained to viewport height */}
       <div className="m-4 h-full overflow-auto">
         <div className="max-w-[980px] w-full mx-auto h-full">
-          <EventsPage tasks={tasks} setTasks={setTasks} events={events} setEvents={setEvents} />
+          {loading ? (
+            <div className="flex justify-center items-center h-full">
+              <div className="text-xl text-gray-600">Loading tasks and events...</div>
+            </div>
+          ) : (
+            <EventsPage 
+              tasks={tasks} 
+              setTasks={setTasks} 
+              events={events} 
+              setEvents={setEvents}
+              onTasksUpdate={fetchTasks}
+              onEventsUpdate={fetchEvents}
+            />
+          )}
         </div>
       </div>
 
