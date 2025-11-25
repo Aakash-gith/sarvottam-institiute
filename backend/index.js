@@ -9,6 +9,8 @@ import cookieParser from "cookie-parser";
 import path from "path";
 import { fileURLToPath } from "url";
 import authMiddleware from "./middleware/auth.middleware.js";
+import progressRoutes from "./routes/progress.routes.js";
+import subjectNotesRoutes from "./routes/subjectsNotes.routes.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -34,6 +36,8 @@ app.use(
 app.use("/api/auth", authRoutes);
 app.use("/api/event", authMiddleware, eventRoutes);
 app.use("/api/task", authMiddleware, taskRoutes);
+app.use("/api/progress", authMiddleware, progressRoutes);
+app.use("/api/subjectNotes",  subjectNotesRoutes); //TODO add admin and auth middleware
 
 const frontendPath = path.join(__dirname, "../frontend/dist");
 app.use(express.static(frontendPath));

@@ -9,13 +9,13 @@ function Navbar() {
     { name: "Home", path: "/" },
     { name: "Events", path: "/events" },
     { name: "News ", path: "#" },
-    { name: "Notes", path: "#" },
+    { name: "Notes", path: "/notes" },
   ];
 
   const toggleMenu = () => setIsOpen((prev) => !prev);
 
   return (
-    <div>
+    <div >
       <button
         onClick={toggleMenu}
         className={`fixed top-2 left-2  z-50 md:hidden ${

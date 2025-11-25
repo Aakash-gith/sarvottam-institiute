@@ -11,7 +11,7 @@ export default function Signup() {
     name: "",
     email: "",
     password: "",
-    year: "",
+    semester: "",
   });
 
   const navigate = useNavigate();
@@ -123,26 +123,30 @@ export default function Signup() {
               </div>
             </div>
 
-            {/* Year */}
+            {/* semester */}
             <div>
               <label
-                htmlFor="year"
+                htmlFor="semester"
                 className="text-gray-400 text-sm block mb-2"
               >
-                Year
+                semester
               </label>
               <select
-                id="year"
-                value={formData.year}
+                id="semester"
+                value={formData.semester}
                 onChange={handleChange}
                 className="w-full bg-bg-top text-white px-4 py-3 rounded-lg border border-dark-secondary focus:border-accent focus:outline-none transition-colors"
                 required
               >
-                <option value="">Select year</option>
-                <option value="1">1st Year</option>
-                <option value="2">2nd Year</option>
-                <option value="3">3rd Year</option>
-                <option value="4">4th Year</option>
+                <option value="">Select semester</option>
+                <option value="1">1st semester</option>
+                <option value="2">2nd semester</option>
+                <option value="3">3rd semester</option>
+                <option value="4">4th semester</option>
+                <option value="5">5th semester</option>
+                <option value="6">6th semester</option>
+                <option value="7">7th semester</option>
+                <option value="8">8th semester</option>
               </select>
             </div>
 

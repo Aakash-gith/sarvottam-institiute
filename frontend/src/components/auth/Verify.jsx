@@ -57,7 +57,8 @@ export default function VerifyOTP() {
         navigate("/auth/login");
       }
       if (location.state?.type == "signup") {
-        dispatch(login({ userData: response.data.user }));
+        const { user, accessToken, refreshToken } = response.data;
+        dispatch(login({ user, accessToken, refreshToken }));
 
         alert("Account verified! Logging you in...");
         localStorage.removeItem("emailVerify");

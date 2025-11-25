@@ -1,15 +1,18 @@
 import React from "react";
 import { HeaderBar, Calendar } from "./index.components";
+import { semesterData } from "../semesterData";
+
+import { Link } from "react-router-dom";
 
 function Dashboard() {
-  const subjects = [
-    { name: "Maths", path: "#", img: "/assets/maths.jpeg" },
-    { name: "Physics", path: "#", img: "/assets/physics.jpeg" },
-    { name: "AI & ML", path: "#", img: "/assets/aiml.jpeg" },
-    { name: "Network", path: "#", img: "/assets/network.jpeg" },
-    { name: "Java", path: "#", img: "/assets/java.jpeg" },
-  ];
+  const userData = JSON.parse(localStorage.getItem("user") || "{}");
+  const currentSemester = userData.semester;
 
+  const subjects = semesterData[currentSemester]?.subjects || [];
+
+  const getImagePath = (subject) => {
+    return `/assets/subjects/${subject.id}.jpeg`;
+  };
   return (
     <div className="h-screen">
       <HeaderBar />
@@ -19,19 +22,69 @@ function Dashboard() {
           Your Subjects
         </h2>
 
-        <div className="flex flex-wrap gap-4 mb-8">
-          {subjects.map((subject, index) => (
-            <div
-              key={index}
-              className="text-white rounded-2xl px-8 py-6 text-center font-semibold cursor-pointer hover:opacity-90 transition-all duration-150 min-w-42 h-30 bg-cover bg-center relative"
-              style={{ backgroundImage: `url(${subject.img})` }}
+        <div
+          className="
+    grid 
+    gap-6
+    grid-cols-1
+    sm:grid-cols-2
+    md:grid-cols-3 
+    xl:grid-cols-4
+    place-items-center
+  "
+        >
+          {subjects.map((subject) => (
+            <Link
+              to={`/notes/${subject.id}`}
+              key={subject.id}
+              className="
+    group
+    w-full
+    max-w-[260px]
+    h-44
+    rounded-2xl
+    bg-cover
+    bg-center
+    overflow-hidden
+    relative
+    cursor-pointer
+    transition-all
+  "
+              style={{ backgroundImage: `url(${getImagePath(subject)})` }}
             >
-              <div className="absolute inset-0 bg-black/50 bg-opacity-40 rounded-2xl grid -z-10">
-                <span className="relative  text-center place-self-center text-2xl z-10">
-                  {subject.name}
-                </span>
+              {/* Hover overlay */}
+              <div
+                className="
+      absolute inset-0 
+      bg-black/0
+      group-hover:bg-black/60 
+      transition-all 
+      duration-300
+    "
+              />
+
+              {/* Name reveal */}
+              <div
+                className="
+      absolute inset-0
+      flex 
+      items-center 
+      justify-center
+      opacity-0
+      group-hover:opacity-100
+      transition-opacity 
+      duration-300
+      text-white 
+      text-xl 
+      font-bold 
+      px-3 
+      text-center
+      wrap-break-words
+    "
+              >
+                {subject.name}
               </div>
-            </div>
+            </Link>
           ))}
         </div>
 

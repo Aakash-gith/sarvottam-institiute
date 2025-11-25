@@ -20,11 +20,11 @@ const userSchema = new mongoose.Schema(
       required: true,
       minlength: 6,
     },
-    year: {
+    semester: {
       type: Number,
       required: true,
       min: 1,
-      max: 4,
+      max: 8,
     },
     refreshTokens: {
       type: [String],

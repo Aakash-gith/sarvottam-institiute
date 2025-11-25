@@ -4,8 +4,7 @@ import {
   createTask,
   updateTask,
   deleteTask as deleteTaskAPI,
-  createEvent,
-  updateEvent,
+
   deleteEvent as deleteEventAPI,
 } from "../api/tasks";
 import { CreateEvent } from "./index.components";

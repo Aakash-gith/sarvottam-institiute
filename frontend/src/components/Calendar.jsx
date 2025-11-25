@@ -99,7 +99,7 @@ function Calendar({ refresh, className = "", showUpcoming = true, showHeader = t
               <span className="text-sm">{day}</span>
               {/* Dot for event days */}
               {hasEvent && (
-                <span className="absolute bottom-[4px] left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-accent rounded-full"></span>
+                <span className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-accent rounded-full"></span>
               )}
             </div>
           );

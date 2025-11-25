@@ -14,7 +14,7 @@ const REFRESH_SECRET = process.env.REFRESH_SECRET;
 // Generate Tokens
 export const generateTokens = (user) => {
   const accessToken = jwt.sign(
-    { id: user._id, email: user.email, name: user.name, year: user.year },
+    { id: user._id, email: user.email, name: user.name, semester: user.semester },
     JWT_SECRET,
     { expiresIn: "30m" }
   );
@@ -85,10 +85,10 @@ export const checkUserExists = async (email) => {
 // SEND OTP
 export const sendOtp = async (user, type = "signup") => {
   try {
-    const { name, email, password, year } = user;
+    const { name, email, password, semester } = user;
 
     if (
-      (type === "signup" && (!email || !name || !year || !password)) ||
+      (type === "signup" && (!email || !name || !semester || !password)) ||
       (type === "reset" && !email)
     ) {
       return { success: false, status: 400, message: "All fields required" };
@@ -120,7 +120,7 @@ export const sendOtp = async (user, type = "signup") => {
 
       const tempData =
         type === "signup"
-          ? { name, email, password: hashedPassword, year }
+          ? { name, email, password: hashedPassword, semester }
           : { email, password: hashedPassword };
 
       await redis.setex(`tempUser:${email}`, 300, JSON.stringify(tempData));
@@ -204,7 +204,7 @@ export const verifyOtp = async (req, res) => {
           id: newUser._id,
           name: newUser.name,
           email: newUser.email,
-          year: newUser.year,
+          semester: newUser.semester,
         },
         accessToken,
         refreshToken,

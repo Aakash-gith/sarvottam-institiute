@@ -8,4 +8,21 @@ import Dashboard from "./Dashboard";
 import Calendar from "./Calendar";
 import CreateEvent from "./event/CreateEvent";
 import EventsPage from "./EventsPage";
-export { Signup, Login, Verify, ForgotPass, Navbar, HeaderBar, Dashboard, Calendar, CreateEvent, EventsPage };
+import Progress from "./notes/Progress";
+import Subjects from "./notes/Subjects";
+import SingleNotes from "./notes/SingleNotes";
+export {
+  Signup,
+  Login,
+  Verify,
+  ForgotPass,
+  Navbar,
+  HeaderBar,
+  Dashboard,
+  Calendar,
+  CreateEvent,
+  EventsPage,
+  Progress,
+  Subjects,
+  SingleNotes,
+};

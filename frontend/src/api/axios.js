@@ -15,66 +15,93 @@ const onRefreshed = (token) => {
 };
 
 API.interceptors.request.use(async (config) => {
-  let accessToken = localStorage.getItem("accessToken");
-  const refreshToken = localStorage.getItem("refreshToken");
-
-  if (!accessToken) return config;
-
-  const payload = JSON.parse(atob(accessToken.split(".")[1]));
-  const isExpired = payload.exp * 1000 < Date.now();
-
-  if (!isExpired) {
-    config.headers.Authorization = `Bearer ${accessToken}`;
-    return config;
-  }
-
-  if (!refreshToken) {
-    localStorage.clear();
-    window.location.href = "/auth/login";
-    throw new Error("Missing refresh token");
-  }
-
-  if (isRefreshing) {
-    const newToken = await new Promise((resolve) =>
-      subscribeTokenRefresh(resolve)
-    );
-    config.headers.Authorization = `Bearer ${newToken}`;
-    return config;
-  }
-
-  isRefreshing = true;
   try {
-    const { data } = await axios.post(
-      `${import.meta.env.VITE_API_BASE_URL}/refresh`,
-      { token: refreshToken },
-      { withCredentials: true }
-    );
-
-    const { accessToken: newAccess, refreshToken: newRefresh } = data;
-
-    localStorage.setItem("accessToken", newAccess);
-    if (newRefresh) localStorage.setItem("refreshToken", newRefresh);
-
-    onRefreshed(newAccess);
-    isRefreshing = false;
-
-    config.headers.Authorization = `Bearer ${newAccess}`;
-    return config;
-  } catch (err) {
-    console.error("Token refresh failed:", err);
+    let accessToken = localStorage.getItem("accessToken");
     const refreshToken = localStorage.getItem("refreshToken");
-    const userId = localStorage.getItem("userId");
 
-    if (refreshToken && userId) {
-      await axios.post(`${import.meta.env.VITE_API_BASE_URL}/auth/logout`, {
-        id: userId,
-        token: refreshToken,
-      });
+    if (!accessToken) {
+      console.log("No access token found");
+      return config;
     }
-    localStorage.clear();
-    isRefreshing = false;
-    window.location.href = "/auth/login";
-    throw err;
+
+    // Validate token format (JWT has 3 parts separated by dots)
+    const tokenParts = accessToken.split(".");
+    if (tokenParts.length !== 3) {
+      console.error("Invalid token format");
+      localStorage.removeItem("accessToken");
+      return config;
+    }
+
+    // Safely decode token payload
+    try {
+      const payload = JSON.parse(atob(tokenParts[1]));
+      const isExpired = payload.exp * 1000 < Date.now();
+
+      if (!isExpired) {
+        config.headers.Authorization = `Bearer ${accessToken}`;
+        return config;
+      }
+    } catch (decodeError) {
+      console.error("Failed to decode token:", decodeError);
+      localStorage.removeItem("accessToken");
+      return config;
+    }
+
+    // Token is expired, try to refresh
+    if (!refreshToken) {
+      console.log("No refresh token, clearing storage");
+      localStorage.clear();
+      window.location.href = "/auth/login";
+      throw new Error("Missing refresh token");
+    }
+
+    if (isRefreshing) {
+      const newToken = await new Promise((resolve) =>
+        subscribeTokenRefresh(resolve)
+      );
+      config.headers.Authorization = `Bearer ${newToken}`;
+      return config;
+    }
+
+    isRefreshing = true;
+    try {
+      const { data } = await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/auth/refresh`,
+        { token: refreshToken },
+        { withCredentials: true }
+      );
+
+      const { accessToken: newAccess, refreshToken: newRefresh } = data;
+
+      localStorage.setItem("accessToken", newAccess);
+      if (newRefresh) localStorage.setItem("refreshToken", newRefresh);
+
+      onRefreshed(newAccess);
+      isRefreshing = false;
+
+      config.headers.Authorization = `Bearer ${newAccess}`;
+      return config;
+    } catch (err) {
+      console.error("Token refresh failed:", err.message);
+      const userId = localStorage.getItem("userId");
+
+      try {
+        await axios.post(`${import.meta.env.VITE_API_BASE_URL}/auth/logout`, {
+          id: userId,
+          token: refreshToken,
+        });
+      } catch (logoutErr) {
+        console.error("Logout request failed:", logoutErr);
+      }
+
+      localStorage.clear();
+      isRefreshing = false;
+      window.location.href = "/auth/login";
+      throw err;
+    }
+  } catch (error) {
+    console.error("Request interceptor error:", error);
+    return config;
   }
 });
 

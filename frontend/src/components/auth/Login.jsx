@@ -32,21 +32,12 @@ export default function Login() {
     e.preventDefault();
     try {
       const { data } = await API.post("/auth/login", formData);
-
-      dispatch(
-        login({
-          userData: {
-            ...data.user,
-            accessToken: data.accessToken,
-            refreshToken: data.refreshToken,
-          },
-        })
-      );
-
+      const { user, accessToken, refreshToken } = data;
+      dispatch(login({ user, accessToken, refreshToken }));
       navigate("/");
     } catch (error) {
       console.error("Login Error:", error.response?.data || error.message);
-      setError(error.response?.data.message );
+      setError(error.response?.data.message);
     }
   };
 
