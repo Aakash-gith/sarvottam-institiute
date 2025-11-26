@@ -4,20 +4,20 @@ export const semesterData = {
     subjects: [
       {
         id: 1,
-        name: "Calculus I",
-        description: "Limits, Derivatives, and integrals",
+        name: "Mathematics I - Differential Calculus",
+        description: "Limits, Derivatives, Applications of Derivatives",
         icon: "f",
       },
       {
         id: 2,
-        name: "Physics I",
-        description: "Classical Mechanics and Newton's Laws",
+        name: "Physics I - Mechanics",
+        description: "Classical Mechanics, Newton's Laws, Motion",
         icon: "⚛",
       },
       {
         id: 3,
-        name: "Intro to CS",
-        description: "Basics of C Programming",
+        name: "Computer Programming - C Language",
+        description: "Fundamentals of C Programming and Problem Solving",
         icon: "{}",
       },
     ],
@@ -27,20 +27,20 @@ export const semesterData = {
     subjects: [
       {
         id: 4,
-        name: "Linear Algebra",
-        description: "Matrices, Vectors, and Transformations",
+        name: "Mathematics II - Linear Algebra",
+        description: "Matrices, Vector Spaces, Linear Transformations",
         icon: "[]",
       },
       {
         id: 5,
-        name: "Chemistry I",
-        description: "Atomic Structure and Chemical Bonding",
+        name: "Chemistry - General Chemistry",
+        description: "Atomic Structure, Chemical Bonding, Reactions",
         icon: "⚗",
       },
       {
         id: 6,
-        name: "Data Structures",
-        description: "Arrays, Linked Lists, and Trees",
+        name: "Data Structures and Algorithms",
+        description: "Arrays, Linked Lists, Stacks, Queues, Trees",
         icon: "{}",
       },
     ],
@@ -50,15 +50,15 @@ export const semesterData = {
     subjects: [
       {
         id: 7,
-        name: "Discrete Math",
-        description: "Logic, Sets, and Graph Theory",
+        name: "Discrete Mathematics",
+        description: "Mathematical Logic, Set Theory, Graph Theory",
         icon: "∑",
       },
-   
+
       {
         id: 8,
-        name: "Thermodynamics",
-        description: "Heat, Work, and Entropy",
+        name: "Engineering Thermodynamics",
+        description: "Laws of Thermodynamics, Heat Transfer, Entropy",
         icon: "🌡",
       },
     ],
@@ -68,8 +68,8 @@ export const semesterData = {
     subjects: [
       {
         id: 9,
-        name: "Algorithms",
-        description: "Sorting, Searching, and Complexity Analysis",
+        name: "Design and Analysis of Algorithms",
+        description: "Algorithm Design, Time Complexity, Optimization",
         icon: "{}",
       },
     ],

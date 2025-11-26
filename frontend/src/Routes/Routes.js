@@ -1,11 +1,13 @@
-export const index="/";
-export const logIn="/auth/login";
-export const verify="/auth/verify";
-export const signUp="/auth/signup";
-export const forgotPass="/auth/forgot-pass";
-export const events="/events";
-export const notes="/notes";      
-export const subjectNotes="/notes/:subjectId";      
+export const index = "/";
+export const logIn = "/auth/login";
+export const verify = "/auth/verify";
+export const signUp = "/auth/signup";
+export const forgotPass = "/auth/forgot-pass";
+export const events = "/events";
+export const maps = "/maps";
+export const news = "/news";
+export const notes = "/notes";
+export const subjectNotes = "/notes/:subjectId";
 
 
 

@@ -43,31 +43,30 @@ function Events() {
     loadData();
   }, []);
   return (
-    // Root grid: fixed to viewport. Use two columns (sidebar + main) since right panel removed.
-    <div className="grid md:grid-rows-1 md:grid-cols-[minmax(180px,220px)_1fr] h-screen w-screen overflow-hidden bg-bg">
+    <div className="flex h-screen bg-bg">
       <Navbar />
 
-      {/* Main center: make this column scrollable and constrained to viewport height */}
-      <div className="m-4 h-full overflow-auto">
-        <div className="max-w-[980px] w-full mx-auto h-full">
-          {loading ? (
-            <div className="flex justify-center items-center h-full">
-              <div className="text-xl text-gray-600">Loading tasks and events...</div>
-            </div>
-          ) : (
-            <EventsPage 
-              tasks={tasks} 
-              setTasks={setTasks} 
-              events={events} 
-              setEvents={setEvents}
-              onTasksUpdate={fetchTasks}
-              onEventsUpdate={fetchEvents}
-            />
-          )}
+      {/* Main Content Area */}
+      <div className="flex-1 md:ml-64 transition-all duration-300">
+        <div className="m-4 h-full overflow-auto">
+          <div className="max-w-[980px] w-full mx-auto h-full">
+            {loading ? (
+              <div className="flex justify-center items-center h-full">
+                <div className="text-xl text-gray-600">Loading tasks and events...</div>
+              </div>
+            ) : (
+              <EventsPage
+                tasks={tasks}
+                setTasks={setTasks}
+                events={events}
+                setEvents={setEvents}
+                onTasksUpdate={fetchTasks}
+                onEventsUpdate={fetchEvents}
+              />
+            )}
+          </div>
         </div>
       </div>
-
-      {/* right column removed - main content fills remaining space */}
     </div>
   );
 }

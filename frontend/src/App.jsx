@@ -6,11 +6,13 @@ import {
   index,
   forgotPass,
   events,
+  maps,
+  news,
   notes,
   subjectNotes,
 } from "./Routes/Routes";
 
-import { Home, Auth, Events, Notes,SubjectNotes } from "./pages/index.pages";
+import { Home, Auth, Events, Maps, News, Notes, SubjectNotes } from "./pages/index.pages";
 
 function App() {
   return (
@@ -22,6 +24,8 @@ function App() {
         <Route path={forgotPass} element={<Auth />} />
         <Route path={signUp} element={<Auth />} />
         <Route path={events} element={<Events />} />
+        <Route path={maps} element={<Maps />} />
+        <Route path={news} element={<News />} />
         <Route path={notes} element={<Notes />} />
         <Route path={subjectNotes} element={<SubjectNotes />} />
       </Routes>
