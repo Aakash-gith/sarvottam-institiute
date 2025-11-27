@@ -19,7 +19,8 @@ const authSlice = createSlice({
 
       localStorage.setItem("accessToken", accessToken);
       localStorage.setItem("refreshToken", refreshToken);
-      localStorage.setItem("user", JSON.stringify(user)); 
+      localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem("userId", user.id); 
     },
     logout: (state) => {
       state.status = false;
@@ -27,9 +28,16 @@ const authSlice = createSlice({
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");
       localStorage.removeItem("user");
+      localStorage.removeItem("userId");
+    },
+    updateStreak: (state, action) => {
+      if (state.userData) {
+        state.userData.streak = action.payload;
+        localStorage.setItem("user", JSON.stringify(state.userData));
+      }
     },
   },
 });
 
-export const { login, logout } = authSlice.actions;
+export const { login, logout, updateStreak } = authSlice.actions;
 export default authSlice.reducer;

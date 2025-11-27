@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
-import { Dashboard, Calendar, CreateEvent } from "../components/index.components";
+import { Dashboard, Calendar, CreateEvent, HeaderBar } from "../components/index.components";
 
 function Home() {
   const { status } = useSelector((state) => state.auth);
@@ -24,13 +24,24 @@ function Home() {
   };
 
   return (
-    <div className="flex h-screen bg-bg">
+    <div className="flex h-screen bg-bg overflow-hidden">
       <Navbar />
       {/* Main Content Area */}
-      <div className="flex-1 md:ml-64 transition-all duration-300">
-        <div className="grid md:grid-rows-1 md:grid-cols-[1fr_minmax(220px,260px)] h-full">
-          <Dashboard />
-          <Calendar refresh={refreshEvents} />
+      <div className="flex-1 flex flex-col h-screen overflow-hidden">
+        {/* Full-width HeaderBar */}
+        <HeaderBar />
+        
+        {/* Content area with Dashboard and Calendar side by side */}
+        <div className="flex-1 flex overflow-hidden">
+          {/* Main Content */}
+          <div className="flex-1 overflow-y-auto">
+            <Dashboard />
+          </div>
+          
+          {/* Calendar Sidebar */}
+          <div className="w-72 hidden md:block overflow-y-auto border-l border-white/5">
+            <Calendar refresh={refreshEvents} />
+          </div>
         </div>
       </div>
       <CreateEvent open={isModalOpen} onClose={handleClose} />

@@ -7,22 +7,14 @@ function Learning() {
             <Navbar />
 
             {/* Main Content Area */}
-            <div className="flex-1 md:ml-64 transition-all duration-300">
+            <div className="flex-1  transition-all duration-300">
                 <div className="p-10 rounded-lg gap-5 flex flex-col h-full overflow-auto">
                     <HeaderBar />
                     <div className="text-center">
                         <h1 className="text-3xl font-bold text-white mb-4">Learning Center</h1>
                         <p className="text-gray-300 text-lg">Welcome to the learning section of EduGenie!</p>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
-                            <div className="bg-white/10 p-6 rounded-lg">
-                                <h3 className="text-xl font-semibold text-white mb-3">Interactive Quizzes</h3>
-                                <p className="text-gray-300 mb-4">Test your knowledge with our interactive quiz system</p>
-                                <button className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors">
-                                    Start Quiz
-                                </button>
-                            </div>
-
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8 max-w-3xl mx-auto">
                             <div className="bg-white/10 p-6 rounded-lg">
                                 <h3 className="text-xl font-semibold text-white mb-3">Study Materials</h3>
                                 <p className="text-gray-300 mb-4">Access comprehensive learning resources</p>

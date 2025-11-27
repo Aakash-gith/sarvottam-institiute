@@ -31,6 +31,22 @@ const userSchema = new mongoose.Schema(
       default: [],
       // validate: [(arr) => arr.length <= 5, "Too many active sessions"],
     },
+    streak: {
+      type: Number,
+      default: 0,
+    },
+    bestStreak: {
+      type: Number,
+      default: 0,
+    },
+    lastLoginDate: {
+      type: Date,
+      default: null,
+    },
+    profilePicture: {
+      type: String,
+      default: null,
+    },
   },
   { timestamps: true }
 );

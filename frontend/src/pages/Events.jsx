@@ -47,7 +47,7 @@ function Events() {
       <Navbar />
 
       {/* Main Content Area */}
-      <div className="flex-1 md:ml-64 transition-all duration-300">
+      <div className="flex-1  transition-all duration-300">
         <div className="m-4 h-full overflow-auto">
           <div className="max-w-[980px] w-full mx-auto h-full">
             {loading ? (

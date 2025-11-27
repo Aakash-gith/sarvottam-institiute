@@ -1,7 +1,7 @@
 // src/components/SingleNotes.jsx
 import React, { useState, useEffect, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, FileText, Play, HelpCircle } from "lucide-react";
+import { ArrowLeft, FileText, Play } from "lucide-react";
 import { semesterData, markLectureWatched, markNoteRead } from "../../semesterData";
 import API from "../../api/axios";
 
@@ -9,7 +9,7 @@ function SingleNotes() {
   const { subjectId } = useParams();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("Notes");
-  const [content, setContent] = useState({ notes: [], videos: [], quizzes: [] });
+  const [content, setContent] = useState({ notes: [], videos: [] });
   const [loading, setLoading] = useState(true);
   const [subjectProgress, setSubjectProgress] = useState(0);
   const [trackedItems, setTrackedItems] = useState({ notes: [], videos: [] });
@@ -42,7 +42,7 @@ function SingleNotes() {
         const response = await API.get(
           `/subjectNotes/getContent?subjectId=${subjectId}&semesterId=${currentSemester}`
         );
-        setContent(response.data || { notes: [], videos: [], quizzes: [] });
+        setContent(response.data || { notes: [], videos: [] });
 
         const progressResp = await API.get(
           `/progress/getSubjectProgress?semesterId=${currentSemester}`
@@ -214,7 +214,7 @@ function SingleNotes() {
 
       {/* Tabs */}
       <div className="flex gap-2 mb-6 border-b border-slate-700">
-        {["Notes", "Videos", "Quiz"].map((tab) => (
+        {["Notes", "Videos"].map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
@@ -359,35 +359,6 @@ function SingleNotes() {
           </>
         )}
 
-        {activeTab === "Quiz" && (
-          <>
-            {content.quizzes.length > 0 ? (
-              content.quizzes.map((quiz) => (
-                <div
-                  key={quiz._id}
-                  className="bg-slate-800/60 rounded-lg p-4 border border-slate-700/50 hover:border-slate-600 transition-colors flex items-center justify-between group"
-                >
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-md bg-purple-500/30 flex items-center justify-center text-purple-400">
-                      <HelpCircle size={20} />
-                    </div>
-                    <div>
-                      <h3 className="text-white font-semibold">{quiz.title}</h3>
-                      {quiz.description && (
-                        <p className="text-sm text-slate-400 mt-1">{quiz.description}</p>
-                      )}
-                    </div>
-                  </div>
-                  <button className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors">
-                    Take Quiz
-                  </button>
-                </div>
-              ))
-            ) : (
-              <div className="text-center py-12 text-slate-400">No quizzes available for this subject</div>
-            )}
-          </>
-        )}
       </div>
     </div>
   );

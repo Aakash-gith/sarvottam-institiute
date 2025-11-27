@@ -42,6 +42,37 @@ export const login = async (req, res) => {
 
     const valid = await bcrypt.compare(password, user.password);
     if (!valid) return res.status(401).json({ message: "Invalid credentials" });
+    
+    // Calculate streak based on daily login
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    
+    if (user.lastLoginDate) {
+      const lastLogin = new Date(user.lastLoginDate);
+      const lastLoginDay = new Date(lastLogin.getFullYear(), lastLogin.getMonth(), lastLogin.getDate());
+      const diffTime = today.getTime() - lastLoginDay.getTime();
+      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+      
+      if (diffDays === 1) {
+        // Consecutive day login - increment streak
+        user.streak = (user.streak || 0) + 1;
+      } else if (diffDays > 1) {
+        // Missed a day - reset streak
+        user.streak = 1;
+      }
+      // If diffDays === 0, same day login, don't change streak
+    } else {
+      // First login ever
+      user.streak = 1;
+    }
+    
+    // Update best streak if current streak is higher
+    if (user.streak > (user.bestStreak || 0)) {
+      user.bestStreak = user.streak;
+    }
+    
+    user.lastLoginDate = now;
+    
     const { accessToken, refreshToken } = generateTokens(user);
     user.refreshTokens.push(refreshToken);
 
@@ -56,6 +87,7 @@ export const login = async (req, res) => {
         name: user.name,
         email: user.email,
         semester: user.semester,
+        streak: user.streak,
       },
     });
   } catch (err) {

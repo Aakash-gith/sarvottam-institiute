@@ -8,6 +8,9 @@ export const maps = "/maps";
 export const news = "/news";
 export const notes = "/notes";
 export const subjectNotes = "/notes/:subjectId";
-
-
-
+export const quiz = "/quiz";
+export const quizCreate = "/quiz/create";
+export const quizTake = "/quiz/attempt/:attemptId";
+export const quizResults = "/quiz/results/:attemptId";
+export const quizHistory = "/quiz/history";
+export const profile = "/profile";
