@@ -52,8 +52,8 @@ export default function ForgotPass() {
     <div className="min-h-screen flex">
       <div className="w-full lg:w-2/5 bg-bg flex items-center justify-center p-8">
         <div className="w-full max-w-md">
-          <h1 className="text-white text-4xl font-bold mb-2">Reset Password</h1>
-          <p className="text-gray-400 text-sm mb-8">
+          <h1 className="text-gray-900 text-4xl font-bold mb-2">Reset Password</h1>
+          <p className="text-gray-600 text-sm mb-8">
             Enter your email and new password to reset your account.
           </p>
           {error && <p className="text-red-400">{error}</p>}
@@ -62,7 +62,7 @@ export default function ForgotPass() {
             <div>
               <label
                 htmlFor="email"
-                className="text-gray-400 text-sm block mb-2"
+                className="text-gray-700 text-sm block mb-2"
               >
                 Email
               </label>
@@ -71,7 +71,7 @@ export default function ForgotPass() {
                 id="email"
                 value={formData.email}
                 onChange={handleChange}
-                className="w-full bg-bg-top text-white px-4 py-3 rounded-lg border border-dark-secondary focus:border-accent focus:outline-none transition-colors"
+                className="w-full bg-white text-gray-900 px-4 py-3 rounded-lg border border-gray-300 hover:border-gray-400 hover:shadow-md focus:border-blue-600 focus:ring-2 focus:ring-blue-200 focus:outline-none transition-colors"
                 placeholder="Enter your email"
                 required
               />
@@ -81,7 +81,7 @@ export default function ForgotPass() {
             <div>
               <label
                 htmlFor="newPassword"
-                className="text-gray-400 text-sm block mb-2"
+                className="text-gray-700 text-sm block mb-2"
               >
                 New Password
               </label>
@@ -91,14 +91,14 @@ export default function ForgotPass() {
                   id="newPassword"
                   value={formData.newPassword}
                   onChange={handleChange}
-                  className="w-full bg-bg-top text-white px-4 py-3 rounded-lg border border-dark-secondary focus:border-accent focus:outline-none transition-colors pr-12"
+                  className="w-full bg-white text-gray-900 px-4 py-3 rounded-lg border border-gray-300 hover:border-gray-400 hover:shadow-md focus:border-blue-600 focus:ring-2 focus:ring-blue-200 focus:outline-none transition-colors pr-12"
                   placeholder="Enter new password"
                   required
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-600 hover:text-blue-600 cursor-pointer transition-colors"
                 >
                   {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                 </button>
@@ -109,7 +109,7 @@ export default function ForgotPass() {
             <div>
               <label
                 htmlFor="confirmPassword"
-                className="text-gray-400 text-sm block mb-2"
+                className="text-gray-700 text-sm block mb-2"
               >
                 Confirm Password
               </label>
@@ -119,14 +119,14 @@ export default function ForgotPass() {
                   id="confirmPassword"
                   value={formData.confirmPassword}
                   onChange={handleChange}
-                  className="w-full bg-bg-top text-white px-4 py-3 rounded-lg border border-dark-secondary focus:border-accent focus:outline-none transition-colors pr-12"
+                  className="w-full bg-white text-gray-900 px-4 py-3 rounded-lg border border-gray-300 hover:border-gray-400 hover:shadow-md focus:border-blue-600 focus:ring-2 focus:ring-blue-200 focus:outline-none transition-colors pr-12"
                   placeholder="Re-enter new password"
                   required
                 />
                 <button
                   type="button"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-600 hover:text-blue-600 cursor-pointer transition-colors"
                 >
                   {showConfirmPassword ? (
                     <EyeOff size={20} />
@@ -139,7 +139,7 @@ export default function ForgotPass() {
 
             <button
               type="submit"
-              className="w-full bg-accent hover:bg-accent-dark text-white font-semibold py-3 rounded-lg transition-colors"
+              className="w-full bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-semibold py-3 rounded-lg cursor-pointer transition-all duration-200"
             >
               Reset Password
             </button>
