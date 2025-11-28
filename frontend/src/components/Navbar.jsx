@@ -66,19 +66,19 @@ function Navbar() {
     <>
       {/* Top Navigation Bar */}
       <nav className="fixed top-0 left-0 right-0 h-16 bg-white border-b border-gray-200 shadow-sm z-40">
-        <div className="max-w-7xl mx-auto px-6 h-full flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 h-full flex items-center justify-between">
           {/* Logo */}
           <div
-            className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition"
+            className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition flex-shrink-0"
             onClick={() => navigate("/")}
           >
             <span className="text-2xl font-bold text-blue-600">🎓</span>
-            <span className="text-xl font-bold text-gray-800 hidden sm:inline">Sarvottam Institute</span>
+            <span className="text-xl font-bold text-gray-800 whitespace-nowrap">Sarvottam Institute</span>
           </div>
 
           {/* Desktop Navigation */}
           {isLoggedIn && (
-            <div className="hidden md:flex items-center gap-8">
+            <div className="hidden md:flex items-center gap-6 mx-4">
               {navItems.slice(0, -1).map((item) => {
                 const Icon = item.icon;
                 const active = isActive(item.path);
@@ -86,9 +86,9 @@ function Navbar() {
                   <button
                     key={item.name}
                     onClick={() => navigate(item.path)}
-                    className={`flex items-center gap-1 font-medium transition-colors ${active
-                        ? "text-blue-600 border-b-2 border-blue-600"
-                        : "text-gray-600 hover:text-blue-600"
+                    className={`flex items-center gap-1 font-medium transition-colors whitespace-nowrap ${active
+                      ? "text-blue-600 border-b-2 border-blue-600"
+                      : "text-gray-600 hover:text-blue-600"
                       }`}
                   >
                     <Icon size={18} />
@@ -100,13 +100,13 @@ function Navbar() {
           )}
 
           {/* Right Section */}
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-4 flex-shrink-0">
             {/* Search Bar */}
             {isLoggedIn && (
               <input
                 type="text"
                 placeholder="Search"
-                className="hidden lg:block w-48 px-4 py-2 bg-gray-100 border border-gray-300 rounded-lg text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="hidden xl:block w-40 px-3 py-1.5 bg-gray-100 border border-gray-300 rounded-lg text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             )}
 
@@ -190,8 +190,8 @@ function Navbar() {
                         setIsOpen(false);
                       }}
                       className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${active
-                          ? "bg-blue-50 text-blue-600 font-medium"
-                          : "text-gray-600 hover:bg-gray-50"
+                        ? "bg-blue-50 text-blue-600 font-medium"
+                        : "text-gray-600 hover:bg-gray-50"
                         }`}
                     >
                       {item.isProfile && profilePicture ? (
