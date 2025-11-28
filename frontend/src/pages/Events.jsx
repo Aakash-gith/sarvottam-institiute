@@ -43,11 +43,11 @@ function Events() {
     loadData();
   }, []);
   return (
-    <div className="flex h-screen bg-bg">
+    <div className="flex h-screen bg-gray-50">
       <Navbar />
 
       {/* Main Content Area */}
-      <div className="flex-1  transition-all duration-300">
+      <div className="flex-1 transition-all duration-300">
         <div className="m-4 h-full overflow-auto">
           <div className="max-w-[980px] w-full mx-auto h-full">
             {loading ? (

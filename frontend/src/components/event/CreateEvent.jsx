@@ -98,30 +98,29 @@ function CreateEvent({ open, date, onClose, initialEvent = null }) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70">
-      <div className="relative bg-bg w-full max-w-lg mx-4 rounded-xl shadow-lg border border-bg-2 p-6">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+      <div className="relative bg-white w-full max-w-lg mx-4 rounded-xl shadow-2xl border border-gray-200 p-6">
         {/* Close Button */}
         <X
           size={28}
-          color="white"
-          className="absolute top-4 right-4 cursor-pointer hover:scale-110 transition-transform"
+          className="absolute top-4 right-4 cursor-pointer text-gray-500 hover:text-gray-700 hover:scale-110 transition-all"
           onClick={handleClose}
         />
 
         {/* Header */}
-        <h2 className="text-white text-2xl font-semibold mb-6 text-center">
+        <h2 className="text-gray-900 text-2xl font-semibold mb-6 text-center">
           {initialEvent ? `Update Event for ${new Date(formData.date).toDateString()}` : `Create Event for ${new Date(formData.date).toDateString()}`}
         </h2>
 
         {/* Existing Events */}
-        <div className="mb-6 bg-bg-2 rounded-lg p-3">
-          <h3 className="text-gray-300 text-sm mb-2 font-semibold">Existing Events</h3>
+        <div className="mb-6 bg-gray-50 rounded-lg p-3 border border-gray-200">
+          <h3 className="text-gray-700 text-sm mb-2 font-semibold">Existing Events</h3>
           {events.length > 0 ? (
             <ul className="flex flex-col gap-2">
               {events.map((e, i) => (
                 <li
                   key={i}
-                  className="bg-accent/80 text-white rounded-md px-3 py-2 text-sm"
+                  className="bg-blue-50 text-blue-900 rounded-md px-3 py-2 text-sm border border-blue-200"
                 >
                   <span className="font-semibold">{e.title}</span> — {e.event}
                 </li>
@@ -135,7 +134,7 @@ function CreateEvent({ open, date, onClose, initialEvent = null }) {
         {/* Create Event Form */}
         <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
           <div>
-            <label htmlFor="title" className="text-gray-400 text-sm block mb-1">
+            <label htmlFor="title" className="text-gray-700 text-sm block mb-1 font-medium">
               Event Name
             </label>
             <input
@@ -143,28 +142,28 @@ function CreateEvent({ open, date, onClose, initialEvent = null }) {
               id="title"
               value={formData.title}
               onChange={handleChange}
-              className="w-full bg-bg-top text-white px-4 py-3 rounded-lg border border-dark-secondary focus:border-accent focus:outline-none transition-colors"
+              className="w-full bg-white text-gray-900 px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition-colors"
               placeholder="Enter event title"
               required
             />
           </div>
 
           <div>
-            <label htmlFor="event" className="text-gray-400 text-sm block mb-1">
+            <label htmlFor="event" className="text-gray-700 text-sm block mb-1 font-medium">
               Event Details
             </label>
             <textarea
               id="event"
               value={formData.event}
               onChange={handleChange}
-              className="w-full bg-bg-top text-white px-4 py-3 rounded-lg border border-dark-secondary focus:border-accent focus:outline-none transition-colors min-h-40"
+              className="w-full bg-white text-gray-900 px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition-colors min-h-40"
               placeholder="Enter details"
               required
             />
           </div>
 
           <div>
-            <label htmlFor="date" className="text-gray-400 text-sm block mb-1">
+            <label htmlFor="date" className="text-gray-700 text-sm block mb-1 font-medium">
               Date
             </label>
             <input
@@ -173,14 +172,14 @@ function CreateEvent({ open, date, onClose, initialEvent = null }) {
               value={formData.date}
               onChange={handleChange}
               min={new Date().toISOString().split("T")[0]}
-              className="w-full bg-bg-top text-white px-4 py-3 rounded-lg border border-dark-secondary focus:border-accent focus:outline-none transition-colors"
+              className="w-full bg-white text-gray-900 px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition-colors"
               required
             />
           </div>
 
           <button
             type="submit"
-            className="w-full bg-accent hover:bg-accent-1 text-white font-semibold py-3 rounded-lg transition-colors mt-2"
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors mt-2 shadow-sm"
           >
             {initialEvent ? "Update Event" : "Submit"}
           </button>

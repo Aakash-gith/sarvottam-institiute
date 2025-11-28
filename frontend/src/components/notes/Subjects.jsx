@@ -5,6 +5,7 @@ import {
   initClassProgress,
 } from "../../classData";
 import { useNavigate } from "react-router-dom";
+import { BookOpen, Video, ChevronRight, TrendingUp } from "lucide-react";
 
 function Subjects() {
   const [subjectsProgress, setSubjectsProgress] = useState([]);
@@ -28,7 +29,6 @@ function Subjects() {
     if (typeof window !== "undefined") {
       try {
         const userData = JSON.parse(localStorage.getItem("user") || "{}");
-
         return userData.class || 9;
       } catch (error) {
         console.error("Error reading localStorage:", error);
@@ -37,6 +37,7 @@ function Subjects() {
     }
     return 9;
   }, []);
+
   useEffect(() => {
     const loadSubjectProgress = async () => {
       if (!studentId) {
@@ -45,18 +46,24 @@ function Subjects() {
       }
 
       setLoading(true);
-      const data = await fetchSubjectProgress(currentClass);
-
-      setSubjectsProgress(Array.isArray(data) ? data : []);
+      try {
+        const data = await fetchSubjectProgress(currentClass);
+        setSubjectsProgress(Array.isArray(data) ? data : []);
+      } catch (error) {
+        console.error("Error fetching progress:", error);
+        setSubjectsProgress([]);
+      }
       setLoading(false);
     };
 
     loadSubjectProgress();
   }, [studentId, currentClass]);
+
   useEffect(() => {
     const semSubjects = classData[currentClass]?.subjects || [];
     initClassProgress(currentClass, semSubjects);
-  }, []);
+  }, [currentClass]);
+
   const subjects = classData[currentClass]?.subjects || [];
 
   const subjectsWithProgress = subjects.map((subject) => {
@@ -73,72 +80,87 @@ function Subjects() {
 
   if (loading) {
     return (
-      <div className="md:col-span-1 p-6 rounded-xl bg-bg-1 overflow-y-auto  flex items-center justify-center">
-        <div className="text-slate-400">Loading subjects...</div>
+      <div className="bg-white rounded-xl p-8 flex items-center justify-center min-h-[300px]">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+          <span className="text-gray-500 text-sm">Loading subjects...</span>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="md:col-span-1 bg-bg-1 rounded-xl p-6 md:p-8 overflow-y-auto ">
-      <h3 className="text-xl md:text-2xl font-bold text-white mb-6">
-        Your Subjects
-      </h3>
+    <div className="bg-white rounded-xl p-6 md:p-8">
+      <div className="mb-6">
+        <h3 className="text-xl md:text-2xl font-bold text-gray-900">
+          Your Subjects
+        </h3>
+        <p className="text-gray-500 text-sm mt-1">
+          Class {currentClass === 9 ? "IX" : "X"} - Track your learning progress
+        </p>
+      </div>
 
       <div className="space-y-4">
         {subjectsWithProgress.length > 0 ? (
           subjectsWithProgress.map((subject) => (
             <div
               key={subject.id}
-              onClick={() => {
-                navigate(`/notes/${subject.id}`);
-              }}
-              className="bg-slate-800/60 rounded-lg p-4 border border-slate-700/50 hover:border-slate-600 transition-colors cursor-pointer group"
+              onClick={() => navigate(`/notes/${subject.id}`)}
+              className="bg-gray-50 rounded-xl p-5 border border-gray-200 hover:border-blue-400 hover:shadow-lg hover:bg-blue-50/30 transition-all duration-300 cursor-pointer group transform hover:scale-[1.02]"
             >
-              <div className="flex items-start gap-3 mb-2">
-                <div className="w-10 h-10 rounded-md bg-slate-700/50 flex items-center justify-center text-lg font-semibold text-slate-300 group-hover:bg-slate-700 transition-colors shrink-0">
+              <div className="flex items-start gap-4 mb-4">
+                {/* Subject Icon */}
+                <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-2xl shadow-md group-hover:shadow-lg group-hover:scale-110 transition-all duration-300">
                   {subject.icon}
                 </div>
+                
+                {/* Subject Info */}
                 <div className="flex-1">
-                  <h4 className="text-white font-semibold group-hover:text-emerald-400 transition-colors">
-                    {subject.name}
-                  </h4>
-                  <p className="text-xs md:text-sm text-slate-400">
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-gray-900 font-bold text-lg group-hover:text-blue-600 transition-colors">
+                      {subject.name}
+                    </h4>
+                    <ChevronRight 
+                      size={20} 
+                      className="text-gray-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all duration-300" 
+                    />
+                  </div>
+                  <p className="text-sm text-gray-500 mt-1">
                     {subject.description}
                   </p>
                 </div>
               </div>
 
-              <div className="flex gap-3 mb-3 ml-13">
-                <div className="flex items-center gap-1">
-                  <span className="inline-flex items-center justify-center w-4 h-4 rounded bg-blue-500/30 text-blue-300 text-xs font-semibold">
-                    ◉
-                  </span>
-                  <span className="text-xs text-slate-300">
-                    {subject.lectures} Lecture
-                    {subject.lectures !== 1 ? "s" : ""}
+              {/* Stats Row */}
+              <div className="flex gap-4 mb-4 ml-[72px]">
+                <div className="flex items-center gap-2 px-3 py-1.5 bg-blue-100 rounded-lg">
+                  <Video size={14} className="text-blue-600" />
+                  <span className="text-xs font-medium text-blue-700">
+                    {subject.lectures} Lecture{subject.lectures !== 1 ? "s" : ""}
                   </span>
                 </div>
-                <div className="flex items-center gap-1">
-                  <span className="inline-flex items-center justify-center w-4 h-4 rounded bg-amber-500/30 text-amber-300 text-xs font-semibold">
-                    ◆
-                  </span>
-                  <span className="text-xs text-slate-300">
+                <div className="flex items-center gap-2 px-3 py-1.5 bg-amber-100 rounded-lg">
+                  <BookOpen size={14} className="text-amber-600" />
+                  <span className="text-xs font-medium text-amber-700">
                     {subject.notes} Note{subject.notes !== 1 ? "s" : ""}
                   </span>
                 </div>
               </div>
 
-              <div className="ml-13">
+              {/* Progress Bar */}
+              <div className="ml-[72px]">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs text-slate-400">Progress</span>
-                  <span className="text-sm font-semibold text-emerald-400">
+                  <div className="flex items-center gap-2">
+                    <TrendingUp size={14} className="text-gray-400" />
+                    <span className="text-xs text-gray-500 font-medium">Progress</span>
+                  </div>
+                  <span className="text-sm font-bold text-green-600">
                     {subject.completion}%
                   </span>
                 </div>
-                <div className="w-full bg-slate-700/50 rounded-full h-2 overflow-hidden">
+                <div className="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
                   <div
-                    className="bg-linear-to-r from-emerald-500 to-emerald-400 h-full transition-all duration-500"
+                    className="bg-gradient-to-r from-green-500 to-emerald-400 h-full rounded-full transition-all duration-500"
                     style={{ width: `${subject.completion}%` }}
                   />
                 </div>
@@ -146,8 +168,10 @@ function Subjects() {
             </div>
           ))
         ) : (
-          <div className="text-center py-12">
-            <p className="text-slate-400">No subjects yet for this class</p>
+          <div className="text-center py-12 bg-gray-50 rounded-xl border border-gray-200">
+            <div className="text-6xl mb-4">📚</div>
+            <p className="text-gray-500 font-medium">No subjects available yet</p>
+            <p className="text-gray-400 text-sm mt-1">Check back soon for your class materials</p>
           </div>
         )}
       </div>

@@ -233,16 +233,16 @@ const EventsPage = ({ tasks, events, onTasksUpdate, onEventsUpdate }) => {
   }, [tasks]);
 
   return (
-    <div className="p-6 bg-bg-1 rounded-xl text-white space-y-8 overflow-y-auto">
+    <div className="p-6 bg-white rounded-xl border border-gray-200 shadow-sm text-gray-900 space-y-8 overflow-y-auto">
       {/* Tasks Section */}
       <section>
         <h2 className="text-3xl font-bold mb-4">Manage Your Tasks</h2>
         <form
           onSubmit={handleAddTask}
-          className="bg-bg-2 p-4 rounded-lg mb-6 flex flex-col md:flex-row gap-4 items-end"
+          className="bg-gray-50 p-4 rounded-lg mb-6 flex flex-col md:flex-row gap-4 items-end border border-gray-200"
         >
           <div className="flex-1">
-            <label className="block text-sm font-medium text-gray-300">
+            <label className="block text-sm font-medium text-gray-700">
               Task Description
             </label>
             <input
@@ -250,37 +250,37 @@ const EventsPage = ({ tasks, events, onTasksUpdate, onEventsUpdate }) => {
               value={taskDesc}
               onChange={(e) => setTaskDesc(e.target.value)}
               placeholder="e.g., Complete math assignment"
-              className="mt-1 w-full bg-bg-top text-white px-4 py-3 rounded-lg border border-accent/30 ring-1 ring-accent/10 focus:border-accent focus:ring-accent/20 focus:outline-none"
+              className="mt-1 w-full bg-white text-gray-900 px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition-colors"
             />
           </div>
           <div className="flex gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-300">
+              <label className="block text-sm font-medium text-gray-700">
                 Start Date
               </label>
               <input
                 type="date"
                 value={taskStart}
                 onChange={(e) => setTaskStart(e.target.value)}
-                className="mt-1 bg-bg-top text-white px-4 py-3 rounded-lg border border-accent/30 ring-1 ring-accent/10 focus:border-accent focus:ring-accent/20 focus:outline-none"
+                className="mt-1 bg-white text-gray-900 px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition-colors"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-300">
+              <label className="block text-sm font-medium text-gray-700">
                 Target Date
               </label>
               <input
                 type="date"
                 value={taskEnd}
                 onChange={(e) => setTaskEnd(e.target.value)}
-                className="mt-1 bg-bg-top text-white px-4 py-3 rounded-lg border border-accent/30 ring-1 ring-accent/10 focus:border-accent focus:ring-accent/20 focus:outline-none"
+                className="mt-1 bg-white text-gray-900 px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition-colors"
               />
             </div>
           </div>
           <div className="flex items-center gap-3">
             <button
               type="submit"
-              className="bg-accent hover:bg-accent-1 text-white font-bold py-2 px-4 rounded-md flex items-center gap-2 transition-colors"
+              className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md flex items-center gap-2 transition-colors shadow-sm"
             >
               <Plus className="w-5 h-5" /> {editingTask ? "Update Task" : "Add Task"}
             </button>
@@ -293,7 +293,7 @@ const EventsPage = ({ tasks, events, onTasksUpdate, onEventsUpdate }) => {
                   setTaskEnd("");
                   setEditingTask(null);
                 }}
-                className="bg-gray-700 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded-md transition-colors"
+                className="bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium py-2 px-4 rounded-md transition-colors"
               >
                 Cancel
               </button>
@@ -323,18 +323,18 @@ const EventsPage = ({ tasks, events, onTasksUpdate, onEventsUpdate }) => {
             );
 
             return (
-              <div key={idx} className="bg-bg-2 p-4 rounded-lg">
-                <h3 className="font-bold text-lg mb-2">
+              <div key={idx} className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                <h3 className="font-bold text-lg mb-2 text-gray-900">
                   Tasks for {startDateStr} - {endDateStr}
                 </h3>
                 <div className="flex items-center gap-4 mb-3">
-                  <div className="w-full bg-gray-600 rounded-full h-2.5">
+                  <div className="w-full bg-gray-200 rounded-full h-2.5">
                     <div
                       className="bg-green-500 h-2.5 rounded-full transition-all duration-500"
                       style={{ width: `${group.percentage}%` }}
                     />
                   </div>
-                  <span className="text-sm font-medium text-gray-300 whitespace-nowrap">
+                  <span className="text-sm font-medium text-gray-600 whitespace-nowrap">
                     {group.completedCount} / {group.totalCount} completed (
                     {Math.round(group.percentage)}%)
                   </span>
@@ -343,18 +343,18 @@ const EventsPage = ({ tasks, events, onTasksUpdate, onEventsUpdate }) => {
                   {group.tasks.map((task) => (
                     <div
                       key={task._id}
-                      className="bg-bg-2 p-3 rounded-lg flex items-center justify-between"
+                      className="bg-white p-3 rounded-lg border border-gray-200 flex items-center justify-between hover:shadow-sm transition-shadow"
                     >
                       <div className="flex items-center gap-4">
                         <input
                           type="checkbox"
                           checked={!!task.isCompleted}
                           onChange={() => toggleTaskCompletion(task._id)}
-                          className="h-5 w-5 rounded text-indigo-600 focus:ring-indigo-500 bg-bg-top border-bg-2"
+                          className="h-5 w-5 rounded text-blue-600 focus:ring-blue-500 border-gray-300"
                         />
                         <p
                           className={`font-semibold ${
-                            task.isCompleted ? "line-through text-gray-400" : ""
+                            task.isCompleted ? "line-through text-gray-400" : "text-gray-900"
                           }`}
                         >
                           {task.description}
@@ -363,7 +363,7 @@ const EventsPage = ({ tasks, events, onTasksUpdate, onEventsUpdate }) => {
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => handleEditTask(task)}
-                          className="text-gray-300 hover:text-white transition-colors"
+                          className="text-gray-400 hover:text-blue-600 transition-colors"
                           title="Edit task"
                         >
                           <Edit2 className="w-5 h-5" />
@@ -382,7 +382,7 @@ const EventsPage = ({ tasks, events, onTasksUpdate, onEventsUpdate }) => {
             );
           })}
           {tasks.length === 0 && (
-            <p className="text-gray-400">You have no tasks. Add one above!</p>
+            <p className="text-gray-500">You have no tasks. Add one above!</p>
           )}
         </div>
       </section>
@@ -391,11 +391,11 @@ const EventsPage = ({ tasks, events, onTasksUpdate, onEventsUpdate }) => {
       <section>
         <h2 className="text-3xl font-bold mb-4">Manage Deadlines & Events</h2>
 
-        <div className="bg-bg-2 p-3 rounded-md mb-4 flex items-center justify-between gap-4">
+        <div className="bg-gray-50 p-3 rounded-md mb-4 flex items-center justify-between gap-4 border border-gray-200">
           <div className="flex items-center gap-3">
             <label
               htmlFor="notification-time"
-              className="font-medium text-sm sm:text-base"
+              className="font-medium text-sm sm:text-base text-gray-700"
             >
               Notify me:
             </label>
@@ -404,7 +404,7 @@ const EventsPage = ({ tasks, events, onTasksUpdate, onEventsUpdate }) => {
               value={notificationOffset}
               onChange={(e) => setNotificationOffset(e.target.value)}
               disabled={notificationPermission !== "granted"}
-              className="bg-bg-top border border-accent/30 ring-1 ring-accent/10 rounded-md p-2 text-sm focus:ring-accent/20 focus:border-accent disabled:opacity-50 disabled:cursor-not-allowed text-white"
+              className="bg-white border border-gray-300 rounded-md p-2 text-sm focus:ring-2 focus:ring-blue-200 focus:border-blue-500 disabled:opacity-50 disabled:cursor-not-allowed text-gray-900"
             >
               <option value="none">Don't notify</option>
               <option value="day">1 day before</option>
@@ -415,27 +415,27 @@ const EventsPage = ({ tasks, events, onTasksUpdate, onEventsUpdate }) => {
           {notificationPermission !== "granted" && (
             <button
               onClick={requestNotificationPermission}
-              className="bg-accent hover:bg-accent-1 text-white font-bold py-2 px-3 rounded-md text-sm transition-colors"
+              className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-3 rounded-md text-sm transition-colors shadow-sm"
             >
               Enable Notifications
             </button>
           )}
           {notificationPermission === "denied" && (
-            <p className="text-xs text-yellow-400">
+            <p className="text-xs text-yellow-600">
               Notifications are blocked in your browser.
             </p>
           )}
         </div>
 
-        <div className="bg-bg-2 p-4 rounded-lg mb-6 flex flex-col md:flex-row gap-4 items-end">
+        <div className="bg-gray-50 p-4 rounded-lg mb-6 flex flex-col md:flex-row gap-4 items-end border border-gray-200">
           <div className="flex items-center gap-3 justify-between w-full">
-            <label className="block text-sm font-medium text-gray-300">
+            <label className="block text-sm font-medium text-gray-700">
               Create New Events
             </label>
 
             <button
               onClick={handleOpenModal}
-              className="bg-accent hover:bg-accent-1 text-white font-bold py-2 px-4 rounded-md flex items-center gap-2 transition-colors"
+              className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md flex items-center gap-2 transition-colors shadow-sm"
             >
               <Plus className="w-5 h-5" /> Add Event
             </button>
@@ -446,12 +446,12 @@ const EventsPage = ({ tasks, events, onTasksUpdate, onEventsUpdate }) => {
           {events.map((ev) => (
             <div
               key={ev._id}
-              className="bg-bg-2 p-3 rounded-lg flex items-center justify-between"
+              className="bg-white p-3 rounded-lg border border-gray-200 flex items-center justify-between hover:shadow-sm transition-shadow"
             >
               <div>
-                <p className="font-semibold">{ev.title}</p>
-                <p className="text-sm text-gray-300">{ev.event}</p>
-                <p className="text-sm text-gray-400">
+                <p className="font-semibold text-gray-900">{ev.title}</p>
+                <p className="text-sm text-gray-600">{ev.event}</p>
+                <p className="text-sm text-gray-500">
                   {new Date(ev.date).toLocaleDateString("en-US", {
                     year: "numeric",
                     month: "long",
@@ -463,7 +463,7 @@ const EventsPage = ({ tasks, events, onTasksUpdate, onEventsUpdate }) => {
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => handleEditEvent(ev)}
-                  className="text-gray-300 hover:text-white transition-colors"
+                  className="text-gray-400 hover:text-blue-600 transition-colors"
                 >
                   <Edit2 className="w-5 h-5" />
                 </button>
@@ -477,7 +477,7 @@ const EventsPage = ({ tasks, events, onTasksUpdate, onEventsUpdate }) => {
             </div>
           ))}
           {events.length === 0 && (
-            <p className="text-gray-400">You have no events. Add one above!</p>
+            <p className="text-gray-500">You have no events. Add one above!</p>
           )}
         </div>
       </section>

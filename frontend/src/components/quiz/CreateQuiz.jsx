@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { createQuiz } from "../../api/quiz";
 import { toast } from "react-hot-toast";
 import { Navbar } from "../index.components";
+import { Play, Clock, HelpCircle, ArrowLeft, Sparkles } from "lucide-react";
 
 function CreateQuiz() {
   const navigate = useNavigate();
@@ -77,27 +78,42 @@ function CreateQuiz() {
   };
 
   const suggestedTopics = [
-    "Data Structures", "Algorithms", "JavaScript", "React", "Python",
-    "Machine Learning", "Web Development", "Database Systems", "Computer Networks",
-    "Operating Systems", "Software Engineering", "Artificial Intelligence"
+    "Number System", "Polynomials", "Motion", "Force and Laws",
+    "Atoms and Molecules", "Cell Structure", "Coordinate Geometry",
+    "Triangles", "Work and Energy", "Gravitation"
   ];
 
   return (
-    <div className="flex h-screen bg-bg">
+    <div className="flex h-screen bg-gray-50">
       <Navbar />
-      <div className="flex-1  transition-all duration-300 overflow-auto">
-        <div className="min-h-screen bg-bg-1 p-6">
+      <div className="flex-1 transition-all duration-300 overflow-auto">
+        <div className="min-h-screen p-6">
           <div className="max-w-2xl mx-auto">
+            
+            {/* Back Button */}
+            <button
+              onClick={() => navigate("/quiz")}
+              className="flex items-center gap-2 text-gray-600 hover:text-blue-600 font-medium mb-6 group"
+            >
+              <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
+              Back to Quiz Center
+            </button>
+
             <div className="text-center mb-8">
-              <h1 className="text-3xl font-bold text-white mb-2">Create New Quiz</h1>
-              <p className="text-gray-300">Test your knowledge with a personalized quiz</p>
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 mb-4 shadow-lg">
+                <Sparkles size={32} className="text-white" />
+              </div>
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">Create New Quiz</h1>
+              <p className="text-gray-600">Test your knowledge with a personalized quiz</p>
             </div>
 
-            <div className="bg-bg-2 rounded-2xl p-8 shadow-xl">
+            <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-200">
               <form onSubmit={handleSubmit} className="space-y-6">
 
+                {/* Topic Input */}
                 <div>
-                  <label htmlFor="topic" className="block text-white font-semibold mb-3">
+                  <label htmlFor="topic" className="flex items-center gap-2 text-gray-900 font-semibold mb-3">
+                    <HelpCircle size={18} className="text-blue-600" />
                     Quiz Topic
                   </label>
                   <input
@@ -107,22 +123,27 @@ function CreateQuiz() {
                     value={formData.topic}
                     onChange={handleChange}
                     placeholder="Enter the topic..."
-                    className={`w-full px-4 py-3 rounded-xl bg-bg-1 text-white placeholder-gray-400 border ${errors.topic ? "border-red-500" : "border-gray-600"
-                      } focus:border-blue-500 focus:outline-none transition-colors`}
+                    className={`w-full px-4 py-3 rounded-xl bg-gray-50 text-gray-900 placeholder-gray-400 border-2 ${
+                      errors.topic ? "border-red-400" : "border-gray-200"
+                    } focus:border-blue-500 focus:outline-none transition-colors`}
                   />
                   {errors.topic && (
-                    <p className="text-red-400 text-sm mt-1">{errors.topic}</p>
+                    <p className="text-red-500 text-sm mt-1">{errors.topic}</p>
                   )}
 
                   <div className="mt-3">
-                    <p className="text-gray-400 text-sm mb-2">Suggested topics:</p>
+                    <p className="text-gray-500 text-sm mb-2">Suggested topics:</p>
                     <div className="flex flex-wrap gap-2">
                       {suggestedTopics.map((topic) => (
                         <button
                           key={topic}
                           type="button"
                           onClick={() => setFormData(prev => ({ ...prev, topic }))}
-                          className="px-3 py-1 text-xs bg-blue-600 hover:bg-blue-700 text-white rounded-full transition-colors"
+                          className={`px-3 py-1.5 text-xs font-medium rounded-full transition-all ${
+                            formData.topic === topic
+                              ? "bg-blue-600 text-white"
+                              : "bg-blue-50 text-blue-600 hover:bg-blue-100"
+                          }`}
                         >
                           {topic}
                         </button>
@@ -131,8 +152,10 @@ function CreateQuiz() {
                   </div>
                 </div>
 
+                {/* Number of Questions */}
                 <div>
-                  <label htmlFor="numberOfQuestions" className="block text-white font-semibold mb-3">
+                  <label htmlFor="numberOfQuestions" className="flex items-center gap-2 text-gray-900 font-semibold mb-3">
+                    <span className="w-5 h-5 rounded-full bg-blue-100 flex items-center justify-center text-xs text-blue-600 font-bold">#</span>
                     Number of Questions
                   </label>
                   <input
@@ -143,23 +166,25 @@ function CreateQuiz() {
                     onChange={handleChange}
                     min="1"
                     max="50"
-                    className={`w-full px-4 py-3 rounded-xl bg-bg-1 text-white border ${errors.numberOfQuestions ? "border-red-500" : "border-gray-600"
-                      } focus:border-blue-500 focus:outline-none transition-colors`}
+                    className={`w-full px-4 py-3 rounded-xl bg-gray-50 text-gray-900 border-2 ${
+                      errors.numberOfQuestions ? "border-red-400" : "border-gray-200"
+                    } focus:border-blue-500 focus:outline-none transition-colors`}
                   />
                   {errors.numberOfQuestions && (
-                    <p className="text-red-400 text-sm mt-1">{errors.numberOfQuestions}</p>
+                    <p className="text-red-500 text-sm mt-1">{errors.numberOfQuestions}</p>
                   )}
 
-                  <div className="mt-2 flex gap-2">
+                  <div className="mt-3 flex gap-2">
                     {[5, 10, 15, 20].map((num) => (
                       <button
                         key={num}
                         type="button"
                         onClick={() => setFormData(prev => ({ ...prev, numberOfQuestions: num }))}
-                        className={`px-3 py-1 text-sm rounded-lg transition-colors ${formData.numberOfQuestions === num
-                            ? "bg-blue-600 text-white"
-                            : "bg-gray-700 text-gray-300 hover:bg-gray-600"
-                          }`}
+                        className={`px-4 py-2 text-sm font-medium rounded-lg transition-all ${
+                          formData.numberOfQuestions === num
+                            ? "bg-blue-600 text-white shadow-md"
+                            : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                        }`}
                       >
                         {num}
                       </button>
@@ -167,8 +192,10 @@ function CreateQuiz() {
                   </div>
                 </div>
 
+                {/* Time Limit */}
                 <div>
-                  <label htmlFor="timeLimit" className="block text-white font-semibold mb-3">
+                  <label htmlFor="timeLimit" className="flex items-center gap-2 text-gray-900 font-semibold mb-3">
+                    <Clock size={18} className="text-blue-600" />
                     Time Limit (minutes)
                   </label>
                   <input
@@ -179,23 +206,25 @@ function CreateQuiz() {
                     onChange={handleChange}
                     min="1"
                     max="180"
-                    className={`w-full px-4 py-3 rounded-xl bg-bg-1 text-white border ${errors.timeLimit ? "border-red-500" : "border-gray-600"
-                      } focus:border-blue-500 focus:outline-none transition-colors`}
+                    className={`w-full px-4 py-3 rounded-xl bg-gray-50 text-gray-900 border-2 ${
+                      errors.timeLimit ? "border-red-400" : "border-gray-200"
+                    } focus:border-blue-500 focus:outline-none transition-colors`}
                   />
                   {errors.timeLimit && (
-                    <p className="text-red-400 text-sm mt-1">{errors.timeLimit}</p>
+                    <p className="text-red-500 text-sm mt-1">{errors.timeLimit}</p>
                   )}
 
-                  <div className="mt-2 flex gap-2">
+                  <div className="mt-3 flex gap-2">
                     {[15, 30, 45, 60].map((time) => (
                       <button
                         key={time}
                         type="button"
                         onClick={() => setFormData(prev => ({ ...prev, timeLimit: time }))}
-                        className={`px-3 py-1 text-sm rounded-lg transition-colors ${formData.timeLimit === time
-                            ? "bg-blue-600 text-white"
-                            : "bg-gray-700 text-gray-300 hover:bg-gray-600"
-                          }`}
+                        className={`px-4 py-2 text-sm font-medium rounded-lg transition-all ${
+                          formData.timeLimit === time
+                            ? "bg-blue-600 text-white shadow-md"
+                            : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                        }`}
                       >
                         {time}m
                       </button>
@@ -203,34 +232,28 @@ function CreateQuiz() {
                   </div>
                 </div>
 
-                <div className="bg-bg-1 p-4 rounded-xl">
-                  <h3 className="text-white font-semibold mb-2">Quiz Preview</h3>
-                  <div className="text-gray-300 space-y-1">
-                    <p>Topic: {formData.topic || "Not specified"}</p>
-                    <p>Questions: {formData.numberOfQuestions || 0}</p>
-                    <p>Duration: {formData.timeLimit || 0} minutes</p>
+                {/* Preview */}
+                <div className="bg-gray-50 p-5 rounded-xl border border-gray-200">
+                  <h3 className="text-gray-900 font-bold mb-3">Quiz Preview</h3>
+                  <div className="text-gray-600 space-y-2">
+                    <p><span className="font-medium text-gray-700">Topic:</span> {formData.topic || "Not specified"}</p>
+                    <p><span className="font-medium text-gray-700">Questions:</span> {formData.numberOfQuestions || 0}</p>
+                    <p><span className="font-medium text-gray-700">Duration:</span> {formData.timeLimit || 0} minutes</p>
                   </div>
                 </div>
 
+                {/* Submit Button */}
                 <div className="pt-4">
                   <button
                     type="submit"
                     disabled={loading || !formData.topic.trim() || !formData.numberOfQuestions || !formData.timeLimit}
-                    className="w-full bg-gradient-to-r from-blue-600 to-red-600 hover:from-blue-700 hover:to-red-700 disabled:from-gray-600 disabled:to-gray-600 disabled:cursor-not-allowed text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200"
+                    className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 disabled:from-gray-300 disabled:to-gray-300 disabled:cursor-not-allowed text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg"
                   >
+                    <Play size={20} />
                     {loading ? "Creating Quiz..." : "Start Quiz"}
                   </button>
                 </div>
               </form>
-            </div>
-
-            <div className="text-center mt-6">
-              <button
-                onClick={() => navigate(-1)}
-                className="text-gray-400 hover:text-white transition-colors"
-              >
-                Back to Dashboard
-              </button>
             </div>
           </div>
         </div>

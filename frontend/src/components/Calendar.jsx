@@ -98,7 +98,7 @@ function Calendar({ refresh, className = "", showUpcoming = true, showHeader = t
             {/* Month/Year Display */}
             <div className="flex justify-center items-center gap-2 mb-3">
               <span className="text-2xl">📅</span>
-              <h2 className="text-lg font-semibold text-white">
+              <h2 className="text-lg font-semibold text-gray-900">
                 {new Date(displayYear, displayMonth).toLocaleString("default", { month: "long" })} {displayYear}
               </h2>
             </div>
@@ -108,7 +108,7 @@ function Calendar({ refresh, className = "", showUpcoming = true, showHeader = t
               {/* Year navigation */}
               <button
                 onClick={goToPrevYear}
-                className="p-1.5 rounded-lg hover:bg-white/10 transition-colors text-gray-400 hover:text-white"
+                className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors text-gray-500 hover:text-gray-900"
                 title="Previous Year"
               >
                 <ChevronsLeft size={16} />
@@ -117,7 +117,7 @@ function Calendar({ refresh, className = "", showUpcoming = true, showHeader = t
               {/* Month navigation */}
               <button
                 onClick={goToPrevMonth}
-                className="p-1.5 rounded-lg hover:bg-white/10 transition-colors text-gray-400 hover:text-white"
+                className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors text-gray-500 hover:text-gray-900"
                 title="Previous Month"
               >
                 <ChevronLeft size={16} />
@@ -127,8 +127,8 @@ function Calendar({ refresh, className = "", showUpcoming = true, showHeader = t
               <button
                 onClick={goToToday}
                 className={`px-3 py-1 text-xs rounded-lg transition-colors ${isCurrentMonth
-                  ? "bg-accent/20 text-accent cursor-default"
-                  : "bg-white/10 hover:bg-accent text-gray-300 hover:text-white"
+                  ? "bg-blue-100 text-blue-600 cursor-default"
+                  : "bg-gray-100 hover:bg-blue-600 text-gray-600 hover:text-white"
                   }`}
                 disabled={isCurrentMonth}
               >
@@ -138,7 +138,7 @@ function Calendar({ refresh, className = "", showUpcoming = true, showHeader = t
               {/* Month navigation */}
               <button
                 onClick={goToNextMonth}
-                className="p-1.5 rounded-lg hover:bg-white/10 transition-colors text-gray-400 hover:text-white"
+                className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors text-gray-500 hover:text-gray-900"
                 title="Next Month"
               >
                 <ChevronRight size={16} />
@@ -147,7 +147,7 @@ function Calendar({ refresh, className = "", showUpcoming = true, showHeader = t
               {/* Year navigation */}
               <button
                 onClick={goToNextYear}
-                className="p-1.5 rounded-lg hover:bg-white/10 transition-colors text-gray-400 hover:text-white"
+                className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors text-gray-500 hover:text-gray-900"
                 title="Next Year"
               >
                 <ChevronsRight size={16} />
@@ -157,9 +157,9 @@ function Calendar({ refresh, className = "", showUpcoming = true, showHeader = t
         )}
 
         {/* Calendar Grid */}
-        <div className="grid grid-cols-7 gap-1 text-center text-gray-300">
+        <div className="grid grid-cols-7 gap-1 text-center text-gray-600">
           {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map((d) => (
-            <div key={d} className="font-semibold text-[10px] text-gray-400 mb-2">{d}</div>
+            <div key={d} className="font-semibold text-[10px] text-gray-500 mb-2">{d}</div>
           ))}
 
           {Array.from({ length: firstDay }).map((_, i) => (
@@ -181,10 +181,10 @@ function Calendar({ refresh, className = "", showUpcoming = true, showHeader = t
                 key={day}
                 onClick={() => !isPast && handleDateClick(day)}
                 className={`relative cursor-pointer text-sm py-1 w-8 h-8 inline-flex items-center justify-center rounded-full transition-all
-                  ${isPast ? "text-gray-600 cursor-not-allowed"
-                    : isToday ? "bg-accent text-white font-bold shadow-lg shadow-accent/30"
-                      : hasEvent ? "bg-red-500/30 text-white hover:bg-accent/60 ring-1 ring-red-400/50"
-                        : "text-gray-300 hover:bg-white/10"}
+                  ${isPast ? "text-gray-400 cursor-not-allowed"
+                    : isToday ? "bg-blue-600 text-white font-bold shadow-lg shadow-blue-500/30"
+                      : hasEvent ? "bg-red-100 text-red-700 hover:bg-red-200 ring-1 ring-red-300"
+                        : "text-gray-700 hover:bg-gray-100"}
                 `}
               >
                 <span className="text-xs">{day}</span>
@@ -199,11 +199,11 @@ function Calendar({ refresh, className = "", showUpcoming = true, showHeader = t
 
       {/* Upcoming Events Section */}
       {showUpcoming && (
-        <div className="bg-bg-1 rounded-2xl p-4 shadow-lg border border-white/5 flex-1">
-          <div className="flex items-center gap-2 mb-3 pb-2 border-b border-white/10">
+        <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-200 flex-1">
+          <div className="flex items-center gap-2 mb-3 pb-2 border-b border-gray-200">
             <span className="text-lg">🎯</span>
-            <h3 className="text-sm font-semibold">Upcoming Events</h3>
-            <span className="ml-auto text-[10px] text-gray-400 bg-bg-2 px-2 py-0.5 rounded-full">
+            <h3 className="text-sm font-semibold text-gray-900">Upcoming Events</h3>
+            <span className="ml-auto text-[10px] text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
               {events.length}
             </span>
           </div>
@@ -213,10 +213,10 @@ function Calendar({ refresh, className = "", showUpcoming = true, showHeader = t
               {events.slice(0, 4).map((task, index) => (
                 <li
                   key={index}
-                  className="p-2.5 rounded-lg bg-gradient-to-r from-red-600/15 to-red-800/15 border border-red-500/20 hover:border-red-500/40 transition-all duration-200 hover:translate-x-0.5 cursor-pointer"
+                  className="p-2.5 rounded-lg bg-gradient-to-r from-red-50 to-red-100 border border-red-200 hover:border-red-300 transition-all duration-200 hover:translate-x-0.5 cursor-pointer"
                 >
-                  <p className="font-medium text-xs text-white truncate">{task.title}</p>
-                  <p className="text-[10px] text-gray-400 mt-1">
+                  <p className="font-medium text-xs text-gray-900 truncate">{task.title}</p>
+                  <p className="text-[10px] text-gray-500 mt-1">
                     {new Date(task.date).toLocaleDateString('en-US', {
                       month: 'short',
                       day: 'numeric'
