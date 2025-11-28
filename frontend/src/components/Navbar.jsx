@@ -100,13 +100,13 @@ function Navbar() {
           )}
 
           {/* Right Section */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-6">
             {/* Search Bar */}
             {isLoggedIn && (
               <input
                 type="text"
                 placeholder="Search"
-                className="hidden lg:block px-4 py-2 bg-gray-100 border border-gray-300 rounded-lg text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="hidden lg:block w-48 px-4 py-2 bg-gray-100 border border-gray-300 rounded-lg text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             )}
 
@@ -115,13 +115,13 @@ function Navbar() {
               <>
                 <button
                   onClick={() => navigate("/auth/login")}
-                  className="hidden sm:block px-4 py-2 text-blue-600 border border-blue-600 rounded-lg hover:bg-blue-50 transition text-sm font-medium"
+                  className="hidden sm:block px-4 py-2 text-blue-600 border border-blue-600 rounded-lg hover:bg-blue-50 transition text-sm font-medium cursor-pointer"
                 >
                   Login
                 </button>
                 <button
                   onClick={() => navigate("/auth/signup")}
-                  className="hidden sm:block px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm font-medium"
+                  className="hidden sm:block px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm font-medium cursor-pointer"
                 >
                   Sign Up
                 </button>
@@ -129,24 +129,24 @@ function Navbar() {
             ) : (
               <>
                 {/* User Profile Display */}
-                <div className="hidden sm:flex items-center gap-3 pr-4 border-r border-gray-200">
+                <div className="hidden sm:flex items-center gap-3">
                   {profilePicture ? (
                     <img
                       src={getProfilePictureUrl()}
                       alt="Profile"
-                      className="w-8 h-8 rounded-full border-2 border-blue-600 cursor-pointer hover:opacity-80"
+                      className="w-9 h-9 rounded-full border-2 border-blue-600 cursor-pointer hover:opacity-80"
                       onClick={() => navigate("/profile")}
                     />
                   ) : (
                     <div
-                      className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center cursor-pointer hover:bg-blue-700"
+                      className="w-9 h-9 rounded-full bg-blue-600 text-white flex items-center justify-center cursor-pointer hover:bg-blue-700"
                       onClick={() => navigate("/profile")}
                     >
-                      <User size={16} />
+                      <User size={18} />
                     </div>
                   )}
                   <div className="text-left">
-                    <p className="text-sm font-medium text-gray-900">{userData?.name?.split(" ")[0]}</p>
+                    <p className="text-sm font-semibold text-gray-900">{userData?.name?.split(" ")[0]}</p>
                     <p className="text-xs text-gray-500">Class {userData?.class === 9 ? "IX" : "X"}</p>
                   </div>
                 </div>
@@ -154,7 +154,7 @@ function Navbar() {
                 {/* Logout Button */}
                 <button
                   onClick={handleLogout}
-                  className="flex items-center gap-2 px-4 py-2 text-red-600 border border-red-600 rounded-lg hover:bg-red-50 transition text-sm font-medium"
+                  className="flex items-center gap-2 px-4 py-2 text-red-600 border border-red-600 rounded-lg hover:bg-red-50 transition text-sm font-medium cursor-pointer"
                 >
                   <LogOut size={16} />
                   <span className="hidden sm:inline">Logout</span>
