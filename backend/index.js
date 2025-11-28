@@ -32,14 +32,30 @@ const app = express();
 // reset Core Middleware reset
 app.use(cookieParser());
 app.use(express.json());
-const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:5173";
 
-app.use(
-  cors({
-    origin: FRONTEND_URL,
-    credentials: true,
-  })
-);
+// CORS configuration - accept localhost on any port for development
+const corsOptions = {
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+
+    // Allow localhost on any port for development
+    if (origin.startsWith('http://localhost:')) {
+      return callback(null, true);
+    }
+
+    // Check for production origin from env
+    const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:5173";
+    if (origin === FRONTEND_URL) {
+      return callback(null, true);
+    }
+
+    callback(new Error('Not allowed by CORS'));
+  },
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
 
 // Serve uploaded files
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
@@ -51,7 +67,7 @@ app.use("/api/task", authMiddleware, taskRoutes);
 app.use("/api/quiz", authMiddleware, quizRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/progress", authMiddleware, progressRoutes);
-app.use("/api/subjectNotes",  subjectNotesRoutes); //TODO add admin and auth middleware
+app.use("/api/subjectNotes", subjectNotesRoutes); //TODO add admin and auth middleware
 
 const frontendPath = path.join(__dirname, "../frontend/dist");
 app.use(express.static(frontendPath));

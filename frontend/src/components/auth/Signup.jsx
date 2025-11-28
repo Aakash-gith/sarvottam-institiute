@@ -4,6 +4,66 @@ import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import API from "../../api/axios";
 
+// Comprehensive list of legitimate email providers
+// Only these domains are allowed to register/login
+const LEGITIMATE_EMAIL_DOMAINS = [
+  // Major global providers
+  "gmail.com",
+  "yahoo.com",
+  "outlook.com",
+  "hotmail.com",
+  "aol.com",
+  "mail.com",
+  "protonmail.com",
+  "pm.me",
+  "icloud.com",
+  "mac.com",
+  "me.com",
+  "zoho.com",
+  "yandex.com",
+
+  // Indian email providers
+  "rediffmail.com",
+  "indiatimes.com",
+  "sify.com",
+  "airtel.com",
+  "bsnl.com",
+  "vodafone.com",
+  "idea.com",
+
+  // Educational institutions (add your known schools/colleges)
+  "mit.edu",
+  "stanford.edu",
+  "berkeley.edu",
+  "harvard.edu",
+  "iitb.ac.in",
+  "iitd.ac.in",
+  "iitk.ac.in",
+  "iitm.ac.in",
+  "iitp.ac.in",
+  "iitr.ac.in",
+  "iitbhu.ac.in",
+  "iitg.ac.in",
+  "iit.ac.in",
+
+  // Professional/Corporate domains commonly used
+  "company.com",
+
+  // Other legitimate services
+  "tutanota.com",
+  "posteo.de",
+  "mailbox.org",
+];
+
+const isValidEmailDomain = (email) => {
+  const domain = email.toLowerCase().split("@")[1];
+
+  if (!domain) return false;
+
+  // Only allow whitelisted domains - strict whitelist approach
+  return LEGITIMATE_EMAIL_DOMAINS.includes(domain);
+};
+
 export default function Signup() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
@@ -11,7 +71,7 @@ export default function Signup() {
     name: "",
     email: "",
     password: "",
-    semester: "",
+    class: "",
   });
 
   const navigate = useNavigate();
@@ -28,6 +88,13 @@ export default function Signup() {
 
   const handleSignup = async (e) => {
     e.preventDefault();
+
+    // Validate email domain
+    if (!isValidEmailDomain(formData.email)) {
+      setError("Please use a valid email address. Temporary email services are not allowed.");
+      return;
+    }
+
     if (formData.password.length < 6) {
       setError("Password must be at least 6 characters long");
       return;
@@ -47,22 +114,31 @@ export default function Signup() {
   };
 
   return (
-    <div className="min-h-screen flex">
+    <div className="min-h-screen flex bg-gradient-to-br from-gray-50 to-gray-100">
+      <style>{`
+        select#class option {
+          border-radius: 0.5rem;
+          padding: 0.75rem;
+        }
+        select#class option:hover {
+          background-color: #2563eb;
+          color: white;
+        }
+      `}</style>
       {/* Left Side - Signup Form */}
-      <div className="w-full lg:w-2/5 bg-bg flex items-center justify-center p-8">
+      <div className="w-full lg:w-2/5 flex items-center justify-center p-8">
         <div className="w-full max-w-md">
-          <h1 className="text-white text-4xl font-bold mb-2">Sign Up</h1>
-          <p className="text-gray-400 text-sm mb-8">
-            Create your student account
-          </p>
-          {error && <p className="text-red-400">{error}</p>}
+          <div className="mb-8">
+            <h1 className="text-gray-900 text-4xl font-bold mb-2">Sign Up</h1>
+            <p className="text-gray-600 text-sm">Create your student account</p>
+          </div>
+
+          {error && <p className="text-red-600 bg-red-50 border border-red-200 px-4 py-3 rounded-lg mb-6">{error}</p>}
+
           <form onSubmit={handleSignup} className="space-y-6">
             {/* Full Name */}
             <div>
-              <label
-                htmlFor="name"
-                className="text-gray-400 text-sm block mb-2"
-              >
+              <label htmlFor="name" className="text-gray-700 text-sm font-medium block mb-2">
                 Full Name
               </label>
               <input
@@ -70,7 +146,7 @@ export default function Signup() {
                 id="name"
                 value={formData.name}
                 onChange={handleChange}
-                className="w-full bg-bg-top text-white px-4 py-3 rounded-lg border border-dark-secondary focus:border-accent focus:outline-none transition-colors"
+                className="w-full bg-white text-gray-900 px-4 py-3 rounded-lg border border-gray-300 hover:border-gray-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-200 focus:outline-none transition-all shadow-sm hover:shadow-md"
                 placeholder="Enter full name"
                 required
               />
@@ -78,10 +154,7 @@ export default function Signup() {
 
             {/* Email */}
             <div>
-              <label
-                htmlFor="email"
-                className="text-gray-400 text-sm block mb-2"
-              >
+              <label htmlFor="email" className="text-gray-700 text-sm font-medium block mb-2">
                 Email
               </label>
               <input
@@ -89,7 +162,7 @@ export default function Signup() {
                 id="email"
                 value={formData.email}
                 onChange={handleChange}
-                className="w-full bg-bg-top text-white px-4 py-3 rounded-lg border border-dark-secondary focus:border-accent focus:outline-none transition-colors"
+                className="w-full bg-white text-gray-900 px-4 py-3 rounded-lg border border-gray-300 hover:border-gray-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-200 focus:outline-none transition-all shadow-sm hover:shadow-md"
                 placeholder="Enter email"
                 required
               />
@@ -97,10 +170,7 @@ export default function Signup() {
 
             {/* Password */}
             <div>
-              <label
-                htmlFor="password"
-                className="text-gray-400 text-sm block mb-2"
-              >
+              <label htmlFor="password" className="text-gray-700 text-sm font-medium block mb-2">
                 Password
               </label>
               <div className="relative">
@@ -109,50 +179,47 @@ export default function Signup() {
                   id="password"
                   value={formData.password}
                   onChange={handleChange}
-                  className="w-full bg-bg-top text-white px-4 py-3 rounded-lg border border-dark-secondary focus:border-accent focus:outline-none transition-colors pr-12"
+                  className="w-full bg-white text-gray-900 px-4 py-3 rounded-lg border border-gray-300 hover:border-gray-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-200 focus:outline-none transition-all shadow-sm hover:shadow-md pr-12"
                   placeholder="Enter password"
                   required
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword((prev) => !prev)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-600 hover:text-blue-600 transition-all duration-200 cursor-pointer"
                 >
                   {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                 </button>
               </div>
             </div>
 
-            {/* semester */}
+            {/* Class Selection */}
             <div>
-              <label
-                htmlFor="semester"
-                className="text-gray-400 text-sm block mb-2"
-              >
-                semester
+              <label htmlFor="class" className="text-gray-700 text-sm font-medium block mb-2">
+                Class
               </label>
               <select
-                id="semester"
-                value={formData.semester}
+                id="class"
+                value={formData.class}
                 onChange={handleChange}
-                className="w-full bg-bg-top text-white px-4 py-3 rounded-lg border border-dark-secondary focus:border-accent focus:outline-none transition-colors"
+                className="w-full bg-white text-gray-900 px-4 py-3 rounded-lg border border-gray-300 hover:border-gray-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-200 focus:outline-none transition-all shadow-sm hover:shadow-md cursor-pointer appearance-none"
+                style={{
+                  backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%231f2937' d='M6 9L1 4h10z'/%3E%3C/svg%3E\")",
+                  backgroundRepeat: "no-repeat",
+                  backgroundPosition: "right 0.75rem center",
+                  paddingRight: "2.5rem"
+                }}
                 required
               >
-                <option value="">Select semester</option>
-                <option value="1">1st semester</option>
-                <option value="2">2nd semester</option>
-                <option value="3">3rd semester</option>
-                <option value="4">4th semester</option>
-                <option value="5">5th semester</option>
-                <option value="6">6th semester</option>
-                <option value="7">7th semester</option>
-                <option value="8">8th semester</option>
+                <option value="" style={{ borderRadius: "0.5rem", padding: "0.75rem" }}>Select your class</option>
+                <option value="9" style={{ borderRadius: "0.5rem", padding: "0.75rem" }}>Class IX (9th)</option>
+                <option value="10" style={{ borderRadius: "0.5rem", padding: "0.75rem" }}>Class X (10th)</option>
               </select>
             </div>
 
             <button
               type="submit"
-              className="w-full bg-accent hover:bg-accent-dark text-white font-semibold py-3 rounded-lg transition-colors"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105 active:scale-95 cursor-pointer"
             >
               Sign Up
             </button>
@@ -160,12 +227,10 @@ export default function Signup() {
 
           {/* Already have account */}
           <div className="mt-8 text-center">
-            <span className="text-gray-400 text-sm">
-              Already have an account?
-            </span>
+            <span className="text-gray-600 text-sm">Already have an account? </span>
             <button
               onClick={() => navigate("/auth/login")}
-              className="bg-bg-top text-white px-6 py-2 rounded-lg text-sm hover:bg-gray-700 transition-colors ml-2"
+              className="text-blue-600 hover:text-blue-700 font-medium text-sm cursor-pointer transition-colors"
             >
               Login
             </button>
@@ -175,18 +240,27 @@ export default function Signup() {
 
       {/* Right Side */}
       <div
-        className="hidden lg:flex w-3/5 bg-accent p-12 relative overflow-hidden"
-        style={{
-          backgroundImage: `url("/assets/auth_bg.jpeg")`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
+        className="hidden lg:flex w-3/5 bg-gradient-to-br from-blue-600 to-blue-700 p-12 relative overflow-hidden flex-col justify-center"
       >
-        <div className="my-60 relative z-10 max-w-2xl">
-          <h2 className="text-white text-5xl font-bold mb-2">Join Us</h2>
-          <p className="text-purple-200 text-sm">
-            Sign up to create your student account
+        <div className="relative z-10 max-w-2xl">
+          <h2 className="text-white text-5xl font-bold mb-4">Join Sarvottam Institute</h2>
+          <p className="text-blue-100 text-lg mb-8">
+            Learn mathematics and science with interactive content, practice quizzes, and expert guidance. Start your journey to excellence today.
           </p>
+          <div className="space-y-4 text-white/90">
+            <div className="flex items-center gap-3">
+              <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center">✓</div>
+              <span>Comprehensive study materials</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center">✓</div>
+              <span>Practice with unlimited quizzes</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center">✓</div>
+              <span>Track your progress</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>

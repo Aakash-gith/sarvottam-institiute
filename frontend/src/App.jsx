@@ -25,11 +25,12 @@ import CreateQuiz from "./components/quiz/CreateQuiz";
 import TakeQuiz from "./components/quiz/TakeQuiz";
 import QuizResults from "./components/quiz/QuizResults";
 import QuizHistory from "./components/quiz/QuizHistory";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   return (
     <>
-      <Toaster 
+      <Toaster
         position="top-right"
         toastOptions={{
           duration: 4000,
@@ -58,17 +59,19 @@ function App() {
         <Route path={verify} element={<Auth />} />
         <Route path={forgotPass} element={<Auth />} />
         <Route path={signUp} element={<Auth />} />
-        <Route path={events} element={<Events />} />
-        <Route path={maps} element={<Maps />} />
-        <Route path={news} element={<News />} />
-        <Route path={notes} element={<Notes />} />
-        <Route path={subjectNotes} element={<SubjectNotes />} />
-        <Route path={quiz} element={<Quiz />} />
-        <Route path={quizCreate} element={<CreateQuiz />} />
-        <Route path={quizTake} element={<TakeQuiz />} />
-        <Route path={quizResults} element={<QuizResults />} />
-        <Route path={quizHistory} element={<QuizHistory />} />
-        <Route path={profile} element={<Profile />} />
+
+        {/* Protected Routes - Only accessible when logged in */}
+        <Route path={events} element={<ProtectedRoute><Events /></ProtectedRoute>} />
+        <Route path={maps} element={<ProtectedRoute><Maps /></ProtectedRoute>} />
+        <Route path={news} element={<ProtectedRoute><News /></ProtectedRoute>} />
+        <Route path={notes} element={<ProtectedRoute><Notes /></ProtectedRoute>} />
+        <Route path={subjectNotes} element={<ProtectedRoute><SubjectNotes /></ProtectedRoute>} />
+        <Route path={quiz} element={<ProtectedRoute><Quiz /></ProtectedRoute>} />
+        <Route path={quizCreate} element={<ProtectedRoute><CreateQuiz /></ProtectedRoute>} />
+        <Route path={quizTake} element={<ProtectedRoute><TakeQuiz /></ProtectedRoute>} />
+        <Route path={quizResults} element={<ProtectedRoute><QuizResults /></ProtectedRoute>} />
+        <Route path={quizHistory} element={<ProtectedRoute><QuizHistory /></ProtectedRoute>} />
+        <Route path={profile} element={<ProtectedRoute><Profile /></ProtectedRoute>} />
       </Routes>
     </>
   );

@@ -42,17 +42,17 @@ export const login = async (req, res) => {
 
     const valid = await bcrypt.compare(password, user.password);
     if (!valid) return res.status(401).json({ message: "Invalid credentials" });
-    
+
     // Calculate streak based on daily login
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    
+
     if (user.lastLoginDate) {
       const lastLogin = new Date(user.lastLoginDate);
       const lastLoginDay = new Date(lastLogin.getFullYear(), lastLogin.getMonth(), lastLogin.getDate());
       const diffTime = today.getTime() - lastLoginDay.getTime();
       const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-      
+
       if (diffDays === 1) {
         // Consecutive day login - increment streak
         user.streak = (user.streak || 0) + 1;
@@ -65,14 +65,14 @@ export const login = async (req, res) => {
       // First login ever
       user.streak = 1;
     }
-    
+
     // Update best streak if current streak is higher
     if (user.streak > (user.bestStreak || 0)) {
       user.bestStreak = user.streak;
     }
-    
+
     user.lastLoginDate = now;
-    
+
     const { accessToken, refreshToken } = generateTokens(user);
     user.refreshTokens.push(refreshToken);
 
@@ -86,7 +86,7 @@ export const login = async (req, res) => {
         id: user._id,
         name: user.name,
         email: user.email,
-        semester: user.semester,
+        class: user.class,
         streak: user.streak,
       },
     });
@@ -106,9 +106,9 @@ export const logout = async (req, res) => {
 
     const user = await User.findById(id);
     if (!user) return res.status(404).json({ message: "User not found" });
-console.log(
-  token,id
-)
+    console.log(
+      token, id
+    )
     user.refreshTokens = user.refreshTokens.filter(t => t !== token);
     await user.save();
 

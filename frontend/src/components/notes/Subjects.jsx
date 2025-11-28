@@ -1,9 +1,9 @@
 import React, { useMemo, useState, useEffect } from "react";
 import {
-  semesterData,
+  classData,
   fetchSubjectProgress,
-  initSemesterProgress,
-} from "../../semesterData";
+  initClassProgress,
+} from "../../classData";
 import { useNavigate } from "react-router-dom";
 
 function Subjects() {
@@ -24,18 +24,18 @@ function Subjects() {
     return null;
   }, []);
 
-  const currentSemester = useMemo(() => {
+  const currentClass = useMemo(() => {
     if (typeof window !== "undefined") {
       try {
         const userData = JSON.parse(localStorage.getItem("user") || "{}");
 
-        return userData.semester || 1;
+        return userData.class || 9;
       } catch (error) {
         console.error("Error reading localStorage:", error);
-        return 1;
+        return 9;
       }
     }
-    return 1;
+    return 9;
   }, []);
   useEffect(() => {
     const loadSubjectProgress = async () => {
@@ -45,19 +45,19 @@ function Subjects() {
       }
 
       setLoading(true);
-      const data = await fetchSubjectProgress(currentSemester);
+      const data = await fetchSubjectProgress(currentClass);
 
       setSubjectsProgress(Array.isArray(data) ? data : []);
       setLoading(false);
     };
 
     loadSubjectProgress();
-  }, [studentId, currentSemester]);
+  }, [studentId, currentClass]);
   useEffect(() => {
-    const semSubjects = semesterData[currentSemester]?.subjects || [];
-    initSemesterProgress(currentSemester, semSubjects);
+    const semSubjects = classData[currentClass]?.subjects || [];
+    initClassProgress(currentClass, semSubjects);
   }, []);
-  const subjects = semesterData[currentSemester]?.subjects || [];
+  const subjects = classData[currentClass]?.subjects || [];
 
   const subjectsWithProgress = subjects.map((subject) => {
     const progressData = subjectsProgress.find(
@@ -147,7 +147,7 @@ function Subjects() {
           ))
         ) : (
           <div className="text-center py-12">
-            <p className="text-slate-400">No subjects yet for this semester</p>
+            <p className="text-slate-400">No subjects yet for this class</p>
           </div>
         )}
       </div>

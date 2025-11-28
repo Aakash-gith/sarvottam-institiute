@@ -1,6 +1,6 @@
-# 🎓 EduGenie
+# 🎓 Sarvottam Institute
 
-EduGenie is a comprehensive full-stack educational web application designed to enhance the student learning experience. It provides an interactive platform for AI-powered quizzes, academic progress tracking, personalized learning materials, and campus management features.
+Sarvottam Institute is a comprehensive full-stack educational web application designed to enhance the student learning experience. It provides an interactive platform for AI-powered quizzes, academic progress tracking, personalized learning materials, and campus management features.
 
 ---
 
@@ -62,7 +62,7 @@ EduGenie is a comprehensive full-stack educational web application designed to e
 
 ```bash
 git clone https://github.com/gp91bits/EduGenie.git
-cd EduGenie
+cd Sarvottam
 ```
 
 ### Backend Setup
@@ -86,7 +86,7 @@ npm install
 PORT=3000
 
 # MongoDB
-MONGODB_URI=mongodb://localhost:27017/edugenie
+MONGODB_URI=mongodb://localhost:27017/sarvottam
 
 # JWT Secrets
 ACCESS_TOKEN_SECRET=your_access_token_secret
@@ -167,7 +167,7 @@ The frontend will run on `http://localhost:5173`
 ## 📁 Project Structure
 
 ```
-EduGenie/
+Sarvottam Institute/
 ├── backend/
 │   ├── conf/           # Configuration files (database, mail, redis)
 │   ├── controllers/    # Route controllers

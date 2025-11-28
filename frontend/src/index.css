@@ -1,19 +1,20 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap");
 @import "tailwindcss";
+
 @theme {
-  --color-bg: hsl(0, 0%, 20%);
-  --color-bg-1: hsl(0, 0%, 35%);
-  --color-bg-2: hsl(0, 0%, 28%);
-  --color-bg-1: hsl(0, 0%, 25%);
-  --color-accent: #7a4bc4;
-  --color-accent-1: #945df0;
+  --color-bg: #f5f7fa;
+  --color-bg-1: #ffffff;
+  --color-bg-2: #eef2f7;
+  --color-accent: #1e40af;
+  --color-accent-1: #3b82f6;
 }
 
 body {
   font-family: "Poppins", sans-serif;
-  color:white;
+  color: #1f2937;
   overflow: hidden;
   height: 100vh;
+  background-color: #f5f7fa;
 }
 
 html {
@@ -29,10 +30,12 @@ html {
 .font-poppins {
   font-family: "Poppins", sans-serif;
 }
+
 @keyframes marquee {
   0% {
     transform: translateX(0%);
   }
+
   100% {
     transform: translateX(-50%);
   }
@@ -43,6 +46,7 @@ html {
   display: inline-block;
 
 }
-::-webkit-scrollbar{
+
+::-webkit-scrollbar {
   display: none;
 }

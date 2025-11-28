@@ -41,7 +41,7 @@ function News() {
                             {newsItems.map((item) => (
                                 <div key={item.id} className="bg-white/10 p-6 rounded-lg">
                                     <div className="flex items-start justify-between mb-3">
-                                        <span className="bg-purple-600 text-white px-3 py-1 rounded-full text-sm font-medium">
+                                        <span className="bg-red-600 text-white px-3 py-1 rounded-full text-sm font-medium">
                                             {item.category}
                                         </span>
                                         <span className="text-gray-400 text-sm">{item.date}</span>
@@ -50,7 +50,7 @@ function News() {
                                     <h2 className="text-xl font-semibold text-white mb-3">{item.title}</h2>
                                     <p className="text-gray-300 mb-4">{item.summary}</p>
 
-                                    <button className="text-purple-400 hover:text-purple-300 font-medium">
+                                    <button className="text-red-400 hover:text-red-300 font-medium">
                                         Read More →
                                     </button>
                                 </div>
@@ -58,7 +58,7 @@ function News() {
                         </div>
 
                         <div className="text-center mt-8">
-                            <button className="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors">
+                            <button className="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition-colors">
                                 Load More News
                             </button>
                         </div>

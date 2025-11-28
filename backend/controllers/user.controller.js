@@ -44,8 +44,8 @@ export const getProfileStats = async (req, res) => {
     const userId = req.user.id;
 
     // Get user data
-    const user = await User.findById(userId).select('name email semester streak bestStreak lastLoginDate profilePicture');
-    
+    const user = await User.findById(userId).select('name email class streak bestStreak lastLoginDate profilePicture');
+
     if (!user) {
       return res.status(404).json({
         success: false,
@@ -61,15 +61,15 @@ export const getProfileStats = async (req, res) => {
 
     // Calculate stats
     const totalQuizzes = quizAttempts.length;
-    
+
     let bestScore = 0;
     let totalScore = 0;
     let totalCorrect = 0;
     let totalIncorrect = 0;
     let totalQuestions = 0;
-    
+
     const topicCounts = {};
-    
+
     quizAttempts.forEach(attempt => {
       if (attempt.score > bestScore) {
         bestScore = attempt.score;
@@ -78,7 +78,7 @@ export const getProfileStats = async (req, res) => {
       totalCorrect += attempt.correctAnswers || 0;
       totalIncorrect += attempt.incorrectAnswers || 0;
       totalQuestions += attempt.totalQuestions || 0;
-      
+
       // Count topics
       if (attempt.topic) {
         topicCounts[attempt.topic] = (topicCounts[attempt.topic] || 0) + 1;
@@ -224,6 +224,52 @@ export const updateSemester = async (req, res) => {
   }
 };
 
+// Update user class
+export const updateClass = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { class: userClass } = req.body;
+
+    if (!userClass || (userClass !== 9 && userClass !== 10)) {
+      return res.status(400).json({
+        success: false,
+        message: "Class must be either 9 or 10"
+      });
+    }
+
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { class: parseInt(userClass) },
+      { new: true }
+    ).select('name email class streak');
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found"
+      });
+    }
+
+    res.json({
+      success: true,
+      message: "Class updated successfully",
+      data: {
+        name: user.name,
+        email: user.email,
+        class: user.class,
+        streak: user.streak
+      }
+    });
+  } catch (error) {
+    console.error("Update class error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to update class",
+      error: error.message
+    });
+  }
+};
+
 // Upload profile picture
 export const uploadProfilePicture = async (req, res) => {
   try {
@@ -250,7 +296,7 @@ export const uploadProfilePicture = async (req, res) => {
 
     // Save new profile picture path
     const profilePicturePath = `/uploads/profiles/${req.file.filename}`;
-    
+
     const updatedUser = await User.findByIdAndUpdate(
       userId,
       { profilePicture: profilePicturePath },
@@ -280,7 +326,7 @@ export const removeProfilePicture = async (req, res) => {
     const userId = req.user.id;
 
     const user = await User.findById(userId);
-    
+
     if (!user) {
       return res.status(404).json({
         success: false,
@@ -318,7 +364,7 @@ export const getProfilePicture = async (req, res) => {
   try {
     const userId = req.user.id;
     const user = await User.findById(userId).select('profilePicture');
-    
+
     res.json({
       success: true,
       data: {

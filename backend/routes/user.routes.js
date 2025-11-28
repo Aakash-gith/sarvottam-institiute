@@ -17,6 +17,9 @@ router.put("/update-name", userController.updateName);
 // Update user semester
 router.put("/update-semester", userController.updateSemester);
 
+// Update user class
+router.put("/update-class", userController.updateClass);
+
 // Profile picture routes
 router.get("/profile-picture", userController.getProfilePicture);
 router.post("/upload-profile-picture", upload.single("profilePicture"), userController.uploadProfilePicture);

@@ -22,7 +22,7 @@ function Maps() {
                                 <p className="text-gray-400">Campus Map Component Goes Here</p>
                             </div>
 
-                            <button className="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors">
+                            <button className="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition-colors">
                                 View Full Map
                             </button>
                         </div>

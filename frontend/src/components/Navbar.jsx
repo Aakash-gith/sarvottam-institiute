@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Home, BookOpen, Brain, Calendar, Map, Newspaper, Menu, X, User } from "lucide-react";
+import { Home, BookOpen, Brain, Calendar, Map, Newspaper, Menu, X, User, LogOut } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { logout } from "../store/authSlice";
 import API from "../api/axios";
 
 function Navbar() {
@@ -9,7 +10,9 @@ function Navbar() {
   const [profilePicture, setProfilePicture] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
+  const dispatch = useDispatch();
   const userData = useSelector((state) => state.auth.userData);
+  const isLoggedIn = useSelector((state) => state.auth.status);
 
   // Fetch profile picture
   useEffect(() => {
@@ -33,7 +36,15 @@ function Navbar() {
     const baseUrl = import.meta.env.VITE_API_BASE_URL?.replace('/api', '') || 'http://localhost:3000';
     return `${baseUrl}${profilePicture}`;
   };
-  
+
+  const handleLogout = () => {
+    dispatch(logout());
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("user");
+    navigate("/auth/login", { replace: true });
+    setIsOpen(false);
+  };
+
   const navItems = [
     { name: "Home", path: "/", icon: Home },
     { name: "Learning", path: "/notes", icon: BookOpen },
@@ -45,7 +56,7 @@ function Navbar() {
   ];
 
   const toggleMenu = () => setIsOpen((prev) => !prev);
-  
+
   const isActive = (path) => {
     if (path === "/") return location.pathname === "/";
     return location.pathname.startsWith(path);
@@ -53,93 +64,185 @@ function Navbar() {
 
   return (
     <>
-      {/* Hamburger Menu Button - Fixed position, always visible */}
-      <button
-        onClick={toggleMenu}
-        className={`fixed top-3 left-3 z-50 p-2.5 rounded-xl transition-all duration-300 shadow-lg ${
-          isOpen 
-            ? "bg-white text-purple-700" 
-            : "bg-purple-600 text-white hover:bg-purple-700 hover:scale-105"
-        }`}
-        aria-label="Toggle menu"
-      >
-        {isOpen ? <X size={22} strokeWidth={2.5} /> : <Menu size={22} strokeWidth={2.5} />}
-      </button>
-
-      {/* Sidebar Navigation */}
-      <div
-        className={`fixed top-0 left-0 h-screen w-72 transition-all duration-300 z-40
-           ${isOpen ? "translate-x-0" : "-translate-x-full"} 
-           bg-gradient-to-b from-purple-600 via-purple-700 to-purple-900
-           flex flex-col text-white shadow-2xl`}
-      >
-        {/* Logo Section */}
-        <div className="pt-20 pb-6 px-6 border-b border-white/10">
-          <h1
-            className="text-2xl font-bold cursor-pointer hover:scale-105 transition-transform flex items-center gap-2"
-            onClick={() => {
-              navigate("/");
-              setIsOpen(false);
-            }}
+      {/* Top Navigation Bar */}
+      <nav className="fixed top-0 left-0 right-0 h-16 bg-white border-b border-gray-200 shadow-sm z-40">
+        <div className="max-w-7xl mx-auto px-6 h-full flex items-center justify-between">
+          {/* Logo */}
+          <div
+            className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition"
+            onClick={() => navigate("/")}
           >
-            <span className="text-3xl">🎓</span>
-            <span>EduGenie</span>
-          </h1>
-          <p className="text-white/60 text-sm mt-1">Your Learning Companion</p>
-        </div>
+            <span className="text-2xl font-bold text-blue-600">🎓</span>
+            <span className="text-xl font-bold text-gray-800 hidden sm:inline">Sarvottam Institute</span>
+          </div>
 
-        {/* Navigation Links */}
-        <nav className="flex-1 px-4 py-6 overflow-y-auto">
-          <ul className="space-y-2">
-            {navItems.map((item) => {
-              const Icon = item.icon;
-              const active = isActive(item.path);
-              return (
-                <li key={item.name}>
+          {/* Desktop Navigation */}
+          {isLoggedIn && (
+            <div className="hidden md:flex items-center gap-8">
+              {navItems.slice(0, -1).map((item) => {
+                const Icon = item.icon;
+                const active = isActive(item.path);
+                return (
                   <button
-                    className={`w-full flex items-center gap-4 text-left font-medium py-3.5 px-4 rounded-xl
-                             transition-all duration-200 cursor-pointer
-                             ${active 
-                               ? "bg-white text-purple-700 shadow-lg" 
-                               : "hover:bg-white/10 text-white/90 hover:text-white hover:translate-x-1"
-                             }`}
-                    onClick={() => {
-                      setIsOpen(false);
-                      navigate(item.path);
-                    }}
+                    key={item.name}
+                    onClick={() => navigate(item.path)}
+                    className={`flex items-center gap-1 font-medium transition-colors ${active
+                        ? "text-blue-600 border-b-2 border-blue-600"
+                        : "text-gray-600 hover:text-blue-600"
+                      }`}
                   >
-                    {item.isProfile && profilePicture ? (
-                      <div className="w-6 h-6 rounded-full overflow-hidden border-2 border-current">
-                        <img 
-                          src={getProfilePictureUrl()} 
-                          alt="Profile" 
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                    ) : (
-                      <Icon size={22} strokeWidth={active ? 2.5 : 2} />
-                    )}
-                    <span className="text-base">{item.name}</span>
+                    <Icon size={18} />
+                    <span className="text-sm">{item.name}</span>
                   </button>
-                </li>
-              );
-            })}
-          </ul>
-        </nav>
-        
-        {/* Footer */}
-        <div className="p-4 border-t border-white/10 bg-purple-900/50">
-          <p className="text-white/50 text-xs text-center">© 2025 EduGenie</p>
-          <p className="text-white/30 text-xs text-center mt-1">Made with ❤️ for learners</p>
-        </div>
-      </div>
+                );
+              })}
+            </div>
+          )}
 
-      {/* Overlay when menu is open */}
+          {/* Right Section */}
+          <div className="flex items-center gap-4">
+            {/* Search Bar */}
+            {isLoggedIn && (
+              <input
+                type="text"
+                placeholder="Search"
+                className="hidden lg:block px-4 py-2 bg-gray-100 border border-gray-300 rounded-lg text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            )}
+
+            {/* Auth Buttons */}
+            {!isLoggedIn ? (
+              <>
+                <button
+                  onClick={() => navigate("/auth/login")}
+                  className="hidden sm:block px-4 py-2 text-blue-600 border border-blue-600 rounded-lg hover:bg-blue-50 transition text-sm font-medium"
+                >
+                  Login
+                </button>
+                <button
+                  onClick={() => navigate("/auth/signup")}
+                  className="hidden sm:block px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm font-medium"
+                >
+                  Sign Up
+                </button>
+              </>
+            ) : (
+              <>
+                {/* User Profile Display */}
+                <div className="hidden sm:flex items-center gap-3 pr-4 border-r border-gray-200">
+                  {profilePicture ? (
+                    <img
+                      src={getProfilePictureUrl()}
+                      alt="Profile"
+                      className="w-8 h-8 rounded-full border-2 border-blue-600 cursor-pointer hover:opacity-80"
+                      onClick={() => navigate("/profile")}
+                    />
+                  ) : (
+                    <div
+                      className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center cursor-pointer hover:bg-blue-700"
+                      onClick={() => navigate("/profile")}
+                    >
+                      <User size={16} />
+                    </div>
+                  )}
+                  <div className="text-left">
+                    <p className="text-sm font-medium text-gray-900">{userData?.name?.split(" ")[0]}</p>
+                    <p className="text-xs text-gray-500">Class {userData?.class === 9 ? "IX" : "X"}</p>
+                  </div>
+                </div>
+
+                {/* Logout Button */}
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center gap-2 px-4 py-2 text-red-600 border border-red-600 rounded-lg hover:bg-red-50 transition text-sm font-medium"
+                >
+                  <LogOut size={16} />
+                  <span className="hidden sm:inline">Logout</span>
+                </button>
+              </>
+            )}
+
+            {/* Mobile Menu Button */}
+            <button
+              onClick={toggleMenu}
+              className="md:hidden p-2 text-gray-600 hover:text-blue-600"
+            >
+              {isOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      {/* Mobile Menu */}
       {isOpen && (
-        <div
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-30 transition-opacity duration-300"
-          onClick={() => setIsOpen(false)}
-        />
+        <div className="fixed inset-0 top-16 bg-white z-30 md:hidden overflow-y-auto">
+          <div className="p-4 space-y-2">
+            {isLoggedIn && (
+              <>
+                {navItems.map((item) => {
+                  const Icon = item.icon;
+                  const active = isActive(item.path);
+                  return (
+                    <button
+                      key={item.name}
+                      onClick={() => {
+                        navigate(item.path);
+                        setIsOpen(false);
+                      }}
+                      className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${active
+                          ? "bg-blue-50 text-blue-600 font-medium"
+                          : "text-gray-600 hover:bg-gray-50"
+                        }`}
+                    >
+                      {item.isProfile && profilePicture ? (
+                        <div className="w-5 h-5 rounded-full overflow-hidden border-2 border-blue-600">
+                          <img
+                            src={getProfilePictureUrl()}
+                            alt="Profile"
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      ) : (
+                        <Icon size={20} />
+                      )}
+                      <span>{item.name}</span>
+                    </button>
+                  );
+                })}
+                <hr className="my-2" />
+                <button
+                  onClick={handleLogout}
+                  className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-red-600 hover:bg-red-50 transition font-medium"
+                >
+                  <LogOut size={20} />
+                  <span>Logout</span>
+                </button>
+              </>
+            )}
+            {!isLoggedIn && (
+              <div className="space-y-2">
+                <button
+                  onClick={() => {
+                    navigate("/auth/login");
+                    setIsOpen(false);
+                  }}
+                  className="w-full px-4 py-3 text-blue-600 border border-blue-600 rounded-lg hover:bg-blue-50 transition font-medium"
+                >
+                  Login
+                </button>
+                <button
+                  onClick={() => {
+                    navigate("/auth/signup");
+                    setIsOpen(false);
+                  }}
+                  className="w-full px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium"
+                >
+                  Sign Up
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
       )}
     </>
   );

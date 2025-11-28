@@ -7,7 +7,7 @@ function Calendar({ refresh, className = "", showUpcoming = true, showHeader = t
   const [events, setEvents] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  
+
   // Use state for current displayed month/year
   const today = new Date();
   const [displayMonth, setDisplayMonth] = useState(today.getMonth());
@@ -89,12 +89,12 @@ function Calendar({ refresh, className = "", showUpcoming = true, showHeader = t
   const isCurrentMonth = displayMonth === today.getMonth() && displayYear === today.getFullYear();
 
   return (
-    <div className={`${className} text-white h-full overflow-y-auto bg-bg p-3 flex flex-col gap-3`}>
+    <div className={`${className} text-gray-900 h-full overflow-y-auto bg-white p-4 flex flex-col gap-3`}>
       {/* Calendar Section */}
-      <div className="bg-bg-1 rounded-2xl p-4 shadow-lg border border-white/5">
+      <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
         {/* Header with Navigation */}
         {showHeader && (
-          <div className="mb-4 pb-3 border-b border-white/10">
+          <div className="mb-4 pb-3 border-b border-gray-200">
             {/* Month/Year Display */}
             <div className="flex justify-center items-center gap-2 mb-3">
               <span className="text-2xl">📅</span>
@@ -102,7 +102,7 @@ function Calendar({ refresh, className = "", showUpcoming = true, showHeader = t
                 {new Date(displayYear, displayMonth).toLocaleString("default", { month: "long" })} {displayYear}
               </h2>
             </div>
-            
+
             {/* Navigation Controls */}
             <div className="flex items-center justify-between gap-1">
               {/* Year navigation */}
@@ -113,7 +113,7 @@ function Calendar({ refresh, className = "", showUpcoming = true, showHeader = t
               >
                 <ChevronsLeft size={16} />
               </button>
-              
+
               {/* Month navigation */}
               <button
                 onClick={goToPrevMonth}
@@ -122,20 +122,19 @@ function Calendar({ refresh, className = "", showUpcoming = true, showHeader = t
               >
                 <ChevronLeft size={16} />
               </button>
-              
+
               {/* Today button */}
               <button
                 onClick={goToToday}
-                className={`px-3 py-1 text-xs rounded-lg transition-colors ${
-                  isCurrentMonth 
-                    ? "bg-accent/20 text-accent cursor-default" 
-                    : "bg-white/10 hover:bg-accent text-gray-300 hover:text-white"
-                }`}
+                className={`px-3 py-1 text-xs rounded-lg transition-colors ${isCurrentMonth
+                  ? "bg-accent/20 text-accent cursor-default"
+                  : "bg-white/10 hover:bg-accent text-gray-300 hover:text-white"
+                  }`}
                 disabled={isCurrentMonth}
               >
                 Today
               </button>
-              
+
               {/* Month navigation */}
               <button
                 onClick={goToNextMonth}
@@ -144,7 +143,7 @@ function Calendar({ refresh, className = "", showUpcoming = true, showHeader = t
               >
                 <ChevronRight size={16} />
               </button>
-              
+
               {/* Year navigation */}
               <button
                 onClick={goToNextYear}
@@ -183,14 +182,14 @@ function Calendar({ refresh, className = "", showUpcoming = true, showHeader = t
                 onClick={() => !isPast && handleDateClick(day)}
                 className={`relative cursor-pointer text-sm py-1 w-8 h-8 inline-flex items-center justify-center rounded-full transition-all
                   ${isPast ? "text-gray-600 cursor-not-allowed"
-                  : isToday ? "bg-accent text-white font-bold shadow-lg shadow-accent/30"
-                  : hasEvent ? "bg-purple-500/30 text-white hover:bg-accent/60 ring-1 ring-purple-400/50"
-                  : "text-gray-300 hover:bg-white/10"}
+                    : isToday ? "bg-accent text-white font-bold shadow-lg shadow-accent/30"
+                      : hasEvent ? "bg-red-500/30 text-white hover:bg-accent/60 ring-1 ring-red-400/50"
+                        : "text-gray-300 hover:bg-white/10"}
                 `}
               >
                 <span className="text-xs">{day}</span>
                 {hasEvent && !isToday && (
-                  <span className="absolute -bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 bg-purple-400 rounded-full"></span>
+                  <span className="absolute -bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 bg-red-400 rounded-full"></span>
                 )}
               </div>
             );
@@ -208,21 +207,19 @@ function Calendar({ refresh, className = "", showUpcoming = true, showHeader = t
               {events.length}
             </span>
           </div>
-          
+
           {events.length > 0 ? (
             <ul className="flex flex-col gap-2 w-full">
               {events.slice(0, 4).map((task, index) => (
                 <li
                   key={index}
-                  className="p-2.5 rounded-lg bg-gradient-to-r from-purple-600/15 to-purple-800/15 
-                           border border-purple-500/20 hover:border-purple-500/40 
-                           transition-all duration-200 hover:translate-x-0.5 cursor-pointer"
+                  className="p-2.5 rounded-lg bg-gradient-to-r from-red-600/15 to-red-800/15 border border-red-500/20 hover:border-red-500/40 transition-all duration-200 hover:translate-x-0.5 cursor-pointer"
                 >
                   <p className="font-medium text-xs text-white truncate">{task.title}</p>
                   <p className="text-[10px] text-gray-400 mt-1">
-                    {new Date(task.date).toLocaleDateString('en-US', { 
-                      month: 'short', 
-                      day: 'numeric' 
+                    {new Date(task.date).toLocaleDateString('en-US', {
+                      month: 'short',
+                      day: 'numeric'
                     })}
                   </p>
                 </li>

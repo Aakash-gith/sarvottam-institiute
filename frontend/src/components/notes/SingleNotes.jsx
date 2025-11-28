@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft, FileText, Play } from "lucide-react";
-import { semesterData, markLectureWatched, markNoteRead } from "../../semesterData";
+import { classData, markLectureWatched, markNoteRead } from "../../classData";
 import API from "../../api/axios";
 
 function SingleNotes() {
@@ -16,22 +16,22 @@ function SingleNotes() {
   const [pendingMarks, setPendingMarks] = useState({ notes: {}, videos: {} }); // track pending state per id
 
 
-  const currentSemester = useMemo(() => {
+  const currentClass = useMemo(() => {
     if (typeof window !== "undefined") {
       try {
         const userData = JSON.parse(localStorage.getItem("user") || "{}");
-        return userData.semester || 1;
+        return userData.class || 9;
       } catch {
-        return 1;
+        return 9;
       }
     }
-    return 1;
+    return 9;
   }, []);
 
   // Get subject info from static data
   const subject = useMemo(() => {
-    return Object.values(semesterData)
-      .flatMap((sem) => sem.subjects)
+    return Object.values(classData)
+      .flatMap((cls) => cls.subjects)
       .find((s) => s.id === parseInt(subjectId, 10));
   }, [subjectId]);
 
@@ -40,12 +40,12 @@ function SingleNotes() {
       try {
         setLoading(true);
         const response = await API.get(
-          `/subjectNotes/getContent?subjectId=${subjectId}&semesterId=${currentSemester}`
+          `/subjectNotes/getContent?subjectId=${subjectId}&classId=${currentClass}`
         );
         setContent(response.data || { notes: [], videos: [] });
 
         const progressResp = await API.get(
-          `/progress/getSubjectProgress?semesterId=${currentSemester}`
+          `/progress/getSubjectProgress?classId=${currentClass}`
         );
 
         const subjectProg = Array.isArray(progressResp.data)
@@ -70,7 +70,7 @@ function SingleNotes() {
     };
 
     loadContent();
-  }, [subjectId, currentSemester]);
+  }, [subjectId, currentClass]);
 
   if (!subject) {
     return <div className="p-6 text-center text-white">Subject not found</div>;
@@ -218,11 +218,10 @@ function SingleNotes() {
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`px-6 py-3 font-semibold transition-colors ${
-              activeTab === tab
+            className={`px-6 py-3 font-semibold transition-colors ${activeTab === tab
                 ? "text-blue-400 border-b-2 border-blue-400"
                 : "text-slate-400 hover:text-white"
-            }`}
+              }`}
           >
             {tab}
           </button>
@@ -264,11 +263,10 @@ function SingleNotes() {
                         <button
                           onClick={() => handleMarkNote(note._id)}
                           disabled={isDone || isPending}
-                          className={`px-4 py-2 rounded-lg transition-colors shrink-0 ${
-                            isDone
+                          className={`px-4 py-2 rounded-lg transition-colors shrink-0 ${isDone
                               ? "bg-green-700 cursor-default"
                               : "bg-blue-600 hover:bg-blue-700"
-                          } ${isPending ? "opacity-70 cursor-wait" : ""}`}
+                            } ${isPending ? "opacity-70 cursor-wait" : ""}`}
                         >
                           {isDone ? "Done" : isPending ? "Marking..." : "Mark as Read"}
                         </button>
@@ -328,9 +326,8 @@ function SingleNotes() {
                         <button
                           onClick={() => handleMarkVideo(video._id)}
                           disabled={isDone || isPending}
-                          className={`px-4 py-2 rounded-lg transition-colors shrink-0 ${
-                            isDone ? "bg-green-700 cursor-default" : "bg-red-600 hover:bg-red-700"
-                          } ${isPending ? "opacity-70 cursor-wait" : ""}`}
+                          className={`px-4 py-2 rounded-lg transition-colors shrink-0 ${isDone ? "bg-green-700 cursor-default" : "bg-red-600 hover:bg-red-700"
+                            } ${isPending ? "opacity-70 cursor-wait" : ""}`}
                         >
                           {isDone ? "Done" : isPending ? "Marking..." : "Mark as Watched"}
                         </button>

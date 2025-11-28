@@ -2,8 +2,8 @@ import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Navbar, HeaderBar } from "../components/index.components";
-import { 
-  User, Edit2, Save, X, Trophy, Flame, Brain, Target, 
+import {
+  User, Edit2, Save, X, Trophy, Flame, Brain, Target,
   Calendar, TrendingUp, Award, BookOpen, Mail, GraduationCap,
   CheckCircle, XCircle, Clock, BarChart3, Camera, Upload, Trash2,
   ChevronUp, ChevronDown
@@ -16,19 +16,19 @@ function Profile() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const userData = useSelector((state) => state.auth.userData);
-  
+
   const [isEditing, setIsEditing] = useState(false);
-  const [isEditingSemester, setIsEditingSemester] = useState(false);
+  const [isEditingClass, setIsEditingClass] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [savingSemester, setSavingSemester] = useState(false);
+  const [savingClass, setSavingClass] = useState(false);
   const [editName, setEditName] = useState(userData?.name || "");
-  const [editSemester, setEditSemester] = useState(userData?.semester || 1);
+  const [editClass, setEditClass] = useState(userData?.class || 9);
   const [profilePicture, setProfilePicture] = useState(null);
   const [showPictureMenu, setShowPictureMenu] = useState(false);
   const [showCameraModal, setShowCameraModal] = useState(false);
   const [uploadingPicture, setUploadingPicture] = useState(false);
-  
+
   const fileInputRef = useRef(null);
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
@@ -89,15 +89,15 @@ function Profile() {
       toast.error("Name cannot be empty");
       return;
     }
-    
+
     setSaving(true);
     try {
       const response = await API.put("/user/update-name", { name: editName.trim() });
       if (response.data.success) {
         // Update Redux and localStorage
         const updatedUser = { ...userData, name: editName.trim() };
-        dispatch(login({ 
-          user: updatedUser, 
+        dispatch(login({
+          user: updatedUser,
           accessToken: localStorage.getItem("accessToken"),
           refreshToken: localStorage.getItem("refreshToken")
         }));
@@ -117,31 +117,31 @@ function Profile() {
     setIsEditing(false);
   };
 
-  const handleSaveSemester = async () => {
-    if (editSemester < 1 || editSemester > 8) {
-      toast.error("Semester must be between 1 and 8");
+  const handleSaveClass = async () => {
+    if (editClass !== 9 && editClass !== 10) {
+      toast.error("Class must be either 9th or 10th");
       return;
     }
-    
-    setSavingSemester(true);
+
+    setSavingClass(true);
     try {
-      const response = await API.put("/user/update-semester", { semester: editSemester });
+      const response = await API.put("/user/update-class", { class: editClass });
       if (response.data.success) {
         // Update Redux and localStorage
-        const updatedUser = { ...userData, semester: editSemester };
-        dispatch(login({ 
-          user: updatedUser, 
+        const updatedUser = { ...userData, class: editClass };
+        dispatch(login({
+          user: updatedUser,
           accessToken: localStorage.getItem("accessToken"),
           refreshToken: localStorage.getItem("refreshToken")
         }));
-        toast.success("Semester updated successfully!");
-        setIsEditingSemester(false);
+        toast.success("Class updated successfully!");
+        setIsEditingClass(false);
       }
     } catch (error) {
-      console.error("Failed to update semester:", error);
-      toast.error("Failed to update semester");
+      console.error("Failed to update class:", error);
+      toast.error("Failed to update class");
     } finally {
-      setSavingSemester(false);
+      setSavingClass(false);
     }
   };
 
@@ -180,13 +180,13 @@ function Profile() {
       const response = await API.post("/user/upload-profile-picture", formData, {
         headers: { "Content-Type": "multipart/form-data" }
       });
-      
+
       if (response.data.success) {
         setProfilePicture(response.data.data.profilePicture);
         // Update Redux
         const updatedUser = { ...userData, profilePicture: response.data.data.profilePicture };
-        dispatch(login({ 
-          user: updatedUser, 
+        dispatch(login({
+          user: updatedUser,
           accessToken: localStorage.getItem("accessToken"),
           refreshToken: localStorage.getItem("refreshToken")
         }));
@@ -208,8 +208,8 @@ function Profile() {
         setProfilePicture(null);
         // Update Redux
         const updatedUser = { ...userData, profilePicture: null };
-        dispatch(login({ 
-          user: updatedUser, 
+        dispatch(login({
+          user: updatedUser,
           accessToken: localStorage.getItem("accessToken"),
           refreshToken: localStorage.getItem("refreshToken")
         }));
@@ -225,10 +225,10 @@ function Profile() {
   const openCamera = async () => {
     setShowPictureMenu(false);
     setShowCameraModal(true);
-    
+
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ 
-        video: { facingMode: "user", width: 640, height: 480 } 
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: "user", width: 640, height: 480 }
       });
       streamRef.current = stream;
       if (videoRef.current) {
@@ -279,8 +279,8 @@ function Profile() {
     return { letter: "F", color: "text-red-400" };
   };
 
-  const accuracyRate = stats.totalQuestions > 0 
-    ? Math.round((stats.totalCorrect / stats.totalQuestions) * 100) 
+  const accuracyRate = stats.totalQuestions > 0
+    ? Math.round((stats.totalCorrect / stats.totalQuestions) * 100)
     : 0;
 
   const getProfilePictureUrl = () => {
@@ -295,7 +295,7 @@ function Profile() {
         <Navbar />
         <div className="flex-1 flex items-center justify-center">
           <div className="text-white text-lg flex items-center gap-3">
-            <div className="w-6 h-6 border-2 border-purple-500 border-t-transparent rounded-full animate-spin"></div>
+            <div className="w-6 h-6 border-2 border-red-500 border-t-transparent rounded-full animate-spin"></div>
             Loading profile...
           </div>
         </div>
@@ -308,24 +308,24 @@ function Profile() {
       <Navbar />
       <div className="flex-1 flex flex-col h-screen overflow-hidden">
         <HeaderBar />
-        
+
         <div className="flex-1 overflow-y-auto p-6">
           <div className="max-w-6xl mx-auto">
             {/* Profile Header */}
-            <div className="bg-gradient-to-r from-purple-900/40 via-bg-1 to-bg-1 rounded-2xl p-8 mb-6 border border-white/10">
+            <div className="bg-gradient-to-r from-red-900/40 via-bg-1 to-bg-1 rounded-2xl p-8 mb-6 border border-white/10">
               <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
                 {/* Avatar with Picture Menu */}
                 <div className="relative" ref={pictureMenuRef}>
-                  <div 
-                    className="w-28 h-28 bg-gradient-to-br from-purple-500 to-purple-700 rounded-2xl flex items-center justify-center shadow-xl shadow-purple-500/20 cursor-pointer group overflow-hidden"
+                  <div
+                    className="w-28 h-28 bg-gradient-to-br from-red-500 to-red-700 rounded-2xl flex items-center justify-center shadow-xl shadow-red-500/20 cursor-pointer group overflow-hidden"
                     onClick={() => setShowPictureMenu(!showPictureMenu)}
                   >
                     {uploadingPicture ? (
                       <div className="w-8 h-8 border-3 border-white/30 border-t-white rounded-full animate-spin"></div>
                     ) : profilePicture ? (
-                      <img 
-                        src={getProfilePictureUrl()} 
-                        alt="Profile" 
+                      <img
+                        src={getProfilePictureUrl()}
+                        alt="Profile"
                         className="w-full h-full object-cover"
                       />
                     ) : (
@@ -344,7 +344,7 @@ function Profile() {
                         onClick={openCamera}
                         className="w-full flex items-center gap-3 px-4 py-3 text-white hover:bg-white/10 transition-colors"
                       >
-                        <Camera size={18} className="text-purple-400" />
+                        <Camera size={18} className="text-red-400" />
                         <span>Take Photo</span>
                       </button>
                       <button
@@ -375,7 +375,7 @@ function Profile() {
                     className="hidden"
                   />
                 </div>
-                
+
                 {/* User Info */}
                 <div className="flex-1 text-center md:text-left">
                   {isEditing ? (
@@ -384,7 +384,7 @@ function Profile() {
                         type="text"
                         value={editName}
                         onChange={(e) => setEditName(e.target.value)}
-                        className="bg-bg-2 text-white text-2xl font-bold px-4 py-2 rounded-xl border border-purple-500/50 focus:border-purple-500 focus:outline-none"
+                        className="bg-bg-2 text-white text-2xl font-bold px-4 py-2 rounded-xl border border-red-500/50 focus:border-red-500 focus:outline-none"
                         placeholder="Enter your name"
                         autoFocus
                       />
@@ -418,41 +418,32 @@ function Profile() {
                       </button>
                     </div>
                   )}
-                  
+
                   <div className="flex flex-wrap items-center gap-4 justify-center md:justify-start text-gray-400">
                     <div className="flex items-center gap-2">
                       <Mail size={16} />
                       <span className="text-sm">{userData?.email}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <GraduationCap size={16} className="text-purple-400" />
-                      {isEditingSemester ? (
+                      <GraduationCap size={16} className="text-red-400" />
+                      {isEditingClass ? (
                         <div className="flex items-center gap-2">
-                          <div className="flex items-center bg-bg-2 rounded-lg border border-purple-500/50">
-                            <button
-                              onClick={() => setEditSemester(Math.max(1, editSemester - 1))}
-                              className="p-1.5 hover:bg-white/10 rounded-l-lg transition-colors"
-                              disabled={editSemester <= 1}
+                          <div className="flex items-center bg-bg-2 rounded-lg border border-red-500/50">
+                            <select
+                              value={editClass}
+                              onChange={(e) => setEditClass(Number(e.target.value))}
+                              className="p-1.5 bg-transparent text-white font-semibold text-center focus:outline-none cursor-pointer"
                             >
-                              <ChevronDown size={16} className="text-gray-400" />
-                            </button>
-                            <span className="text-white font-semibold px-3 min-w-[80px] text-center">
-                              Sem {editSemester}
-                            </span>
-                            <button
-                              onClick={() => setEditSemester(Math.min(8, editSemester + 1))}
-                              className="p-1.5 hover:bg-white/10 rounded-r-lg transition-colors"
-                              disabled={editSemester >= 8}
-                            >
-                              <ChevronUp size={16} className="text-gray-400" />
-                            </button>
+                              <option value={9}>Class IX (9th)</option>
+                              <option value={10}>Class X (10th)</option>
+                            </select>
                           </div>
                           <button
-                            onClick={handleSaveSemester}
-                            disabled={savingSemester}
+                            onClick={handleSaveClass}
+                            disabled={savingClass}
                             className="p-1.5 bg-green-600 hover:bg-green-700 rounded-lg transition-colors"
                           >
-                            {savingSemester ? (
+                            {savingClass ? (
                               <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                             ) : (
                               <Save size={16} className="text-white" />
@@ -460,8 +451,8 @@ function Profile() {
                           </button>
                           <button
                             onClick={() => {
-                              setEditSemester(userData?.semester || 1);
-                              setIsEditingSemester(false);
+                              setEditClass(userData?.class || 9);
+                              setIsEditingClass(false);
                             }}
                             className="p-1.5 bg-gray-600 hover:bg-gray-700 rounded-lg transition-colors"
                           >
@@ -470,9 +461,9 @@ function Profile() {
                         </div>
                       ) : (
                         <div className="flex items-center gap-2">
-                          <span className="text-sm">Semester {userData?.semester}</span>
+                          <span className="text-sm">Class {userData?.class === 9 ? "IX" : "X"}</span>
                           <button
-                            onClick={() => setIsEditingSemester(true)}
+                            onClick={() => setIsEditingClass(true)}
                             className="p-1 hover:bg-white/10 rounded-lg transition-colors"
                             title="Change semester"
                           >
@@ -482,7 +473,7 @@ function Profile() {
                       )}
                     </div>
                   </div>
-                  
+
                   {/* Quick Stats Badges */}
                   <div className="flex flex-wrap gap-3 mt-4 justify-center md:justify-start">
                     <div className="flex items-center gap-2 bg-orange-500/20 px-4 py-2 rounded-xl border border-orange-500/30">
@@ -507,12 +498,12 @@ function Profile() {
               {/* Total Quizzes */}
               <div className="bg-bg-1 rounded-2xl p-5 border border-white/5">
                 <div className="flex items-center justify-between mb-3">
-                  <Brain size={24} className="text-purple-400" />
+                  <Brain size={24} className="text-red-400" />
                   <span className="text-3xl font-bold text-white">{stats.totalQuizzes}</span>
                 </div>
                 <p className="text-gray-400 text-sm">Total Quizzes Taken</p>
               </div>
-              
+
               {/* Best Score */}
               <div className="bg-bg-1 rounded-2xl p-5 border border-white/5">
                 <div className="flex items-center justify-between mb-3">
@@ -521,7 +512,7 @@ function Profile() {
                 </div>
                 <p className="text-gray-400 text-sm">Best Quiz Score</p>
               </div>
-              
+
               {/* Average Score */}
               <div className="bg-bg-1 rounded-2xl p-5 border border-white/5">
                 <div className="flex items-center justify-between mb-3">
@@ -530,7 +521,7 @@ function Profile() {
                 </div>
                 <p className="text-gray-400 text-sm">Average Score</p>
               </div>
-              
+
               {/* Best Streak */}
               <div className="bg-bg-1 rounded-2xl p-5 border border-white/5">
                 <div className="flex items-center justify-between mb-3">
@@ -546,20 +537,20 @@ function Profile() {
               {/* Accuracy Stats */}
               <div className="bg-bg-1 rounded-2xl p-6 border border-white/5">
                 <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                  <Target size={20} className="text-purple-400" />
+                  <Target size={20} className="text-red-400" />
                   Accuracy Overview
                 </h3>
-                
+
                 {/* Accuracy Ring */}
                 <div className="flex items-center gap-6">
                   <div className="relative w-32 h-32">
                     <svg className="w-full h-full -rotate-90" viewBox="0 0 100 100">
-                      <circle 
-                        cx="50" 
-                        cy="50" 
-                        r="40" 
-                        fill="none" 
-                        stroke="#374151" 
+                      <circle
+                        cx="50"
+                        cy="50"
+                        r="40"
+                        fill="none"
+                        stroke="#374151"
                         strokeWidth="8"
                       />
                       <circle
@@ -577,7 +568,7 @@ function Profile() {
                       <span className="text-2xl font-bold text-white">{accuracyRate}%</span>
                     </div>
                   </div>
-                  
+
                   <div className="flex-1 space-y-3">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
@@ -610,24 +601,23 @@ function Profile() {
                   <Award size={20} className="text-yellow-400" />
                   Top Quiz Topics
                 </h3>
-                
+
                 {stats.favoriteTopics && stats.favoriteTopics.length > 0 ? (
                   <div className="space-y-3">
                     {stats.favoriteTopics.slice(0, 5).map((topic, index) => (
                       <div key={index} className="flex items-center justify-between bg-bg-2/50 p-3 rounded-xl">
                         <div className="flex items-center gap-3">
-                          <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
-                            index === 0 ? 'bg-yellow-500 text-black' :
+                          <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${index === 0 ? 'bg-yellow-500 text-black' :
                             index === 1 ? 'bg-gray-400 text-black' :
-                            index === 2 ? 'bg-orange-600 text-white' :
-                            'bg-gray-600 text-white'
-                          }`}>
+                              index === 2 ? 'bg-orange-600 text-white' :
+                                'bg-gray-600 text-white'
+                            }`}>
                             {index + 1}
                           </span>
                           <span className="text-white font-medium truncate max-w-[150px]">{topic.topic}</span>
                         </div>
                         <div className="text-right">
-                          <span className="text-purple-400 font-semibold">{topic.count} quiz{topic.count > 1 ? 'zes' : ''}</span>
+                          <span className="text-red-400 font-semibold">{topic.count} quiz{topic.count > 1 ? 'zes' : ''}</span>
                         </div>
                       </div>
                     ))}
@@ -651,20 +641,20 @@ function Profile() {
                 {stats.recentQuizzes && stats.recentQuizzes.length > 0 && (
                   <button
                     onClick={() => navigate("/quiz/history")}
-                    className="text-purple-400 hover:text-purple-300 text-sm font-medium"
+                    className="text-red-400 hover:text-red-300 text-sm font-medium"
                   >
                     View All →
                   </button>
                 )}
               </div>
-              
+
               {stats.recentQuizzes && stats.recentQuizzes.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {stats.recentQuizzes.slice(0, 6).map((quiz, index) => {
                     const grade = getGradeFromScore(quiz.score);
                     return (
-                      <div 
-                        key={index} 
+                      <div
+                        key={index}
                         className="bg-bg-2/50 p-4 rounded-xl hover:bg-bg-2 transition-colors cursor-pointer"
                         onClick={() => navigate(`/quiz/results/${quiz._id}`)}
                       >
@@ -676,7 +666,7 @@ function Profile() {
                           <span className="text-gray-400">
                             {quiz.correctAnswers}/{quiz.totalQuestions} correct
                           </span>
-                          <span className="text-purple-400 font-semibold">{quiz.score}%</span>
+                          <span className="text-red-400 font-semibold">{quiz.score}%</span>
                         </div>
                         <p className="text-gray-500 text-xs mt-2">
                           {new Date(quiz.createdAt).toLocaleDateString('en-US', {
@@ -696,7 +686,7 @@ function Profile() {
                   <p className="text-sm mb-4">Start your learning journey by taking a quiz!</p>
                   <button
                     onClick={() => navigate("/quiz/create")}
-                    className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-xl transition-colors"
+                    className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-xl transition-colors"
                   >
                     Take Your First Quiz
                   </button>
@@ -713,7 +703,7 @@ function Profile() {
           <div className="bg-bg-1 rounded-2xl overflow-hidden max-w-lg w-full border border-white/10">
             <div className="flex items-center justify-between p-4 border-b border-white/10">
               <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-                <Camera size={20} className="text-purple-400" />
+                <Camera size={20} className="text-red-400" />
                 Take Photo
               </h3>
               <button
@@ -723,7 +713,7 @@ function Profile() {
                 <X size={20} className="text-gray-400" />
               </button>
             </div>
-            
+
             <div className="relative bg-black">
               <video
                 ref={videoRef}
@@ -734,7 +724,7 @@ function Profile() {
               />
               <canvas ref={canvasRef} className="hidden" />
             </div>
-            
+
             <div className="p-4 flex items-center justify-center gap-4">
               <button
                 onClick={closeCamera}
@@ -744,7 +734,7 @@ function Profile() {
               </button>
               <button
                 onClick={capturePhoto}
-                className="px-8 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-xl transition-colors flex items-center gap-2 font-semibold"
+                className="px-8 py-3 bg-red-600 hover:bg-red-700 text-white rounded-xl transition-colors flex items-center gap-2 font-semibold"
               >
                 <Camera size={20} />
                 Capture

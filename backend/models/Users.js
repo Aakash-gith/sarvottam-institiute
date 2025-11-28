@@ -15,16 +15,15 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    class: {
+      type: Number,
+      required: true,
+      enum: [9, 10],
+    },
     password: {
       type: String,
       required: true,
       minlength: 6,
-    },
-    semester: {
-      type: Number,
-      required: true,
-      min: 1,
-      max: 8,
     },
     refreshTokens: {
       type: [String],

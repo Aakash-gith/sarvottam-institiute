@@ -161,7 +161,7 @@ export default function ForgotPass() {
           <h2 className="text-white text-5xl font-bold mb-2">
             Forgot Password?
           </h2>
-          <p className="text-purple-200 text-sm">
+          <p className="text-red-200 text-sm">
             Reset your password and get back to your account.
           </p>
         </div>
