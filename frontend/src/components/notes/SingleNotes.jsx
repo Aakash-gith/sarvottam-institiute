@@ -77,7 +77,7 @@ function SingleNotes() {
         <div className="text-center">
           <div className="text-6xl mb-4">📚</div>
           <p className="text-gray-600 font-medium">Subject not found</p>
-          <button 
+          <button
             onClick={() => navigate("/notes")}
             className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
           >
@@ -221,7 +221,7 @@ function SingleNotes() {
                   <p className="text-gray-500">{subject.description}</p>
                 </div>
               </div>
-              
+
               {/* Progress Circle */}
               <div className="flex items-center gap-4 bg-gray-50 px-6 py-3 rounded-xl">
                 <div className="relative w-16 h-16">
@@ -271,17 +271,15 @@ function SingleNotes() {
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
-              className={`flex items-center gap-2 px-6 py-3 font-semibold rounded-xl transition-all duration-300 ${
-                activeTab === tab.key
+              className={`flex items-center gap-2 px-6 py-3 font-semibold rounded-xl transition-all duration-300 ${activeTab === tab.key
                   ? "bg-blue-600 text-white shadow-md"
                   : "bg-white text-gray-600 hover:bg-gray-100 border border-gray-200"
-              }`}
+                }`}
             >
               <tab.icon size={18} />
               {tab.key}
-              <span className={`text-xs px-2 py-0.5 rounded-full ${
-                activeTab === tab.key ? "bg-blue-500" : "bg-gray-200"
-              }`}>
+              <span className={`text-xs px-2 py-0.5 rounded-full ${activeTab === tab.key ? "bg-blue-500" : "bg-gray-200"
+                }`}>
                 {tab.count}
               </span>
             </button>
@@ -301,17 +299,15 @@ function SingleNotes() {
                   return (
                     <div
                       key={note._id}
-                      className={`bg-white rounded-xl p-5 border transition-all duration-300 hover:shadow-lg ${
-                        isDone ? "border-green-300 bg-green-50/50" : "border-gray-200 hover:border-blue-300"
-                      }`}
+                      className={`bg-white rounded-xl p-5 border transition-all duration-300 hover:shadow-lg ${isDone ? "border-green-300 bg-green-50/50" : "border-gray-200 hover:border-blue-300"
+                        }`}
                     >
                       <div className="flex items-start justify-between gap-4 mb-4">
                         <div className="flex items-start gap-4">
-                          <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
-                            isDone 
-                              ? "bg-green-100 text-green-600" 
+                          <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${isDone
+                              ? "bg-green-100 text-green-600"
                               : "bg-red-100 text-red-500"
-                          }`}>
+                            }`}>
                             {isDone ? <CheckCircle size={24} /> : <FileText size={24} />}
                           </div>
                           <div>
@@ -331,13 +327,12 @@ function SingleNotes() {
                         <button
                           onClick={() => handleMarkNote(note._id)}
                           disabled={isDone || isPending}
-                          className={`px-5 py-2.5 rounded-lg font-medium transition-all duration-300 shrink-0 ${
-                            isDone
+                          className={`px-5 py-2.5 rounded-lg font-medium transition-all duration-300 shrink-0 ${isDone
                               ? "bg-green-100 text-green-700 cursor-default"
                               : isPending
                                 ? "bg-blue-400 text-white cursor-wait"
                                 : "bg-blue-600 text-white hover:bg-blue-700 hover:shadow-md cursor-pointer"
-                          }`}
+                            }`}
                         >
                           {isDone ? "✓ Completed" : isPending ? "Marking..." : "Mark as Read"}
                         </button>
@@ -379,17 +374,15 @@ function SingleNotes() {
                   return (
                     <div
                       key={video._id}
-                      className={`bg-white rounded-xl p-5 border transition-all duration-300 hover:shadow-lg ${
-                        isDone ? "border-green-300 bg-green-50/50" : "border-gray-200 hover:border-blue-300"
-                      }`}
+                      className={`bg-white rounded-xl p-5 border transition-all duration-300 hover:shadow-lg ${isDone ? "border-green-300 bg-green-50/50" : "border-gray-200 hover:border-blue-300"
+                        }`}
                     >
                       <div className="flex items-start justify-between gap-4 mb-4">
                         <div className="flex items-start gap-4">
-                          <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
-                            isDone 
-                              ? "bg-green-100 text-green-600" 
+                          <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${isDone
+                              ? "bg-green-100 text-green-600"
                               : "bg-red-100 text-red-500"
-                          }`}>
+                            }`}>
                             {isDone ? <CheckCircle size={24} /> : <Play size={24} />}
                           </div>
                           <div>
@@ -409,13 +402,12 @@ function SingleNotes() {
                         <button
                           onClick={() => handleMarkVideo(video._id)}
                           disabled={isDone || isPending}
-                          className={`px-5 py-2.5 rounded-lg font-medium transition-all duration-300 shrink-0 ${
-                            isDone
+                          className={`px-5 py-2.5 rounded-lg font-medium transition-all duration-300 shrink-0 ${isDone
                               ? "bg-green-100 text-green-700 cursor-default"
                               : isPending
                                 ? "bg-red-400 text-white cursor-wait"
                                 : "bg-red-500 text-white hover:bg-red-600 hover:shadow-md cursor-pointer"
-                          }`}
+                            }`}
                         >
                           {isDone ? "✓ Watched" : isPending ? "Marking..." : "Mark as Watched"}
                         </button>

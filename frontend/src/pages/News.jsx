@@ -60,8 +60,8 @@ function News() {
 
                         <div className="space-y-4">
                             {newsItems.map((item) => (
-                                <div 
-                                    key={item.id} 
+                                <div
+                                    key={item.id}
                                     className="bg-white p-6 rounded-xl border border-gray-200 hover:border-blue-300 hover:shadow-lg transition-all duration-300 cursor-pointer group"
                                 >
                                     <div className="flex items-start justify-between mb-4">
@@ -78,7 +78,7 @@ function News() {
                                     <p className="text-gray-600 mb-4">{item.summary}</p>
 
                                     <button className="flex items-center gap-1 text-blue-600 hover:text-blue-700 font-medium group-hover:gap-2 transition-all">
-                                        Read More 
+                                        Read More
                                         <ChevronRight size={18} />
                                     </button>
                                 </div>

@@ -265,8 +265,8 @@ function QuizHistory() {
                               key={page}
                               onClick={() => setCurrentPage(page)}
                               className={`w-10 h-10 rounded-lg font-medium transition-colors ${currentPage === page
-                                  ? "bg-blue-600 text-white"
-                                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                                ? "bg-blue-600 text-white"
+                                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                                 }`}
                             >
                               {page}

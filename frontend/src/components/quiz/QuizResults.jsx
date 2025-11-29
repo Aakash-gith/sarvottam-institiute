@@ -82,7 +82,7 @@ function QuizResults() {
         <div className="text-center">
           <div className="text-6xl mb-4">📊</div>
           <p className="text-gray-600 font-medium">No results available</p>
-          <button 
+          <button
             onClick={() => navigate("/quiz")}
             className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
           >

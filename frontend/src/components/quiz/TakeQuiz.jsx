@@ -8,7 +8,7 @@ import { Clock, ArrowLeft, ArrowRight, CheckCircle } from "lucide-react";
 function TakeQuiz() {
   const { attemptId } = useParams();
   const navigate = useNavigate();
-  
+
   const [loading, setLoading] = useState(true);
   const [quizData, setQuizData] = useState(null);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -127,7 +127,7 @@ function TakeQuiz() {
         <div className="text-center">
           <div className="text-6xl mb-4">📝</div>
           <p className="text-gray-600 font-medium">No questions available</p>
-          <button 
+          <button
             onClick={() => navigate("/quiz")}
             className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
           >
@@ -149,7 +149,7 @@ function TakeQuiz() {
       <div className="flex-1 transition-all duration-300">
         <div className="min-h-screen p-6">
           <div className="max-w-4xl mx-auto">
-        
+
             {/* Header */}
             <div className="flex justify-between items-center mb-8 bg-white rounded-xl p-4 shadow-sm border border-gray-200">
               <div className="flex-1">
@@ -164,7 +164,7 @@ function TakeQuiz() {
 
             {/* Quiz Card */}
             <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-200">
-          
+
               {/* Progress Bar */}
               <div className="mb-8">
                 <div className="flex justify-between items-center mb-2">
@@ -172,7 +172,7 @@ function TakeQuiz() {
                   <span className="text-gray-900 font-semibold">{Math.round(((currentQuestionIndex + 1) / quizData.totalQuestions) * 100)}%</span>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div 
+                  <div
                     className="bg-blue-600 h-2 rounded-full transition-all duration-300"
                     style={{ width: `${((currentQuestionIndex + 1) / quizData.totalQuestions) * 100}%` }}
                   ></div>
@@ -193,16 +193,14 @@ function TakeQuiz() {
                     <button
                       key={index}
                       onClick={() => handleSelectAnswer(optionText)}
-                      className={`w-full p-4 rounded-xl text-left font-medium transition-all duration-200 border-2 ${
-                        isSelected
+                      className={`w-full p-4 rounded-xl text-left font-medium transition-all duration-200 border-2 ${isSelected
                           ? "bg-blue-50 text-blue-700 border-blue-500"
                           : "bg-gray-50 text-gray-700 border-gray-200 hover:border-blue-300 hover:bg-blue-50/50"
-                      }`}
+                        }`}
                     >
                       <div className="flex items-center gap-3">
-                        <span className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${
-                          isSelected ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-600"
-                        }`}>
+                        <span className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${isSelected ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-600"
+                          }`}>
                           {String.fromCharCode(65 + index)}
                         </span>
                         {optionText}
@@ -229,20 +227,19 @@ function TakeQuiz() {
                     const pageNum = Math.floor(currentQuestionIndex / 5);
                     const startIdx = pageNum * 5;
                     const qIndex = startIdx + i;
-                    
+
                     if (qIndex >= quizData.totalQuestions) return null;
-                    
+
                     return (
                       <button
                         key={qIndex}
                         onClick={() => setCurrentQuestionIndex(qIndex)}
-                        className={`w-10 h-10 rounded-lg font-medium transition-all ${
-                          currentQuestionIndex === qIndex
+                        className={`w-10 h-10 rounded-lg font-medium transition-all ${currentQuestionIndex === qIndex
                             ? "bg-blue-600 text-white"
                             : answers[qIndex] !== undefined && answers[qIndex] !== null
-                            ? "bg-green-100 text-green-700 border-2 border-green-300"
-                            : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                        }`}
+                              ? "bg-green-100 text-green-700 border-2 border-green-300"
+                              : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                          }`}
                       >
                         {qIndex + 1}
                       </button>

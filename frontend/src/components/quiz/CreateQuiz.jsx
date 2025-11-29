@@ -89,7 +89,7 @@ function CreateQuiz() {
       <div className="flex-1 transition-all duration-300 overflow-auto">
         <div className="min-h-screen p-6">
           <div className="max-w-2xl mx-auto">
-            
+
             {/* Back Button */}
             <button
               onClick={() => navigate("/quiz")}
@@ -123,9 +123,8 @@ function CreateQuiz() {
                     value={formData.topic}
                     onChange={handleChange}
                     placeholder="Enter the topic..."
-                    className={`w-full px-4 py-3 rounded-xl bg-gray-50 text-gray-900 placeholder-gray-400 border-2 ${
-                      errors.topic ? "border-red-400" : "border-gray-200"
-                    } focus:border-blue-500 focus:outline-none transition-colors`}
+                    className={`w-full px-4 py-3 rounded-xl bg-gray-50 text-gray-900 placeholder-gray-400 border-2 ${errors.topic ? "border-red-400" : "border-gray-200"
+                      } focus:border-blue-500 focus:outline-none transition-colors`}
                   />
                   {errors.topic && (
                     <p className="text-red-500 text-sm mt-1">{errors.topic}</p>
@@ -139,11 +138,10 @@ function CreateQuiz() {
                           key={topic}
                           type="button"
                           onClick={() => setFormData(prev => ({ ...prev, topic }))}
-                          className={`px-3 py-1.5 text-xs font-medium rounded-full transition-all ${
-                            formData.topic === topic
+                          className={`px-3 py-1.5 text-xs font-medium rounded-full transition-all ${formData.topic === topic
                               ? "bg-blue-600 text-white"
                               : "bg-blue-50 text-blue-600 hover:bg-blue-100"
-                          }`}
+                            }`}
                         >
                           {topic}
                         </button>
@@ -166,9 +164,8 @@ function CreateQuiz() {
                     onChange={handleChange}
                     min="1"
                     max="50"
-                    className={`w-full px-4 py-3 rounded-xl bg-gray-50 text-gray-900 border-2 ${
-                      errors.numberOfQuestions ? "border-red-400" : "border-gray-200"
-                    } focus:border-blue-500 focus:outline-none transition-colors`}
+                    className={`w-full px-4 py-3 rounded-xl bg-gray-50 text-gray-900 border-2 ${errors.numberOfQuestions ? "border-red-400" : "border-gray-200"
+                      } focus:border-blue-500 focus:outline-none transition-colors`}
                   />
                   {errors.numberOfQuestions && (
                     <p className="text-red-500 text-sm mt-1">{errors.numberOfQuestions}</p>
@@ -180,11 +177,10 @@ function CreateQuiz() {
                         key={num}
                         type="button"
                         onClick={() => setFormData(prev => ({ ...prev, numberOfQuestions: num }))}
-                        className={`px-4 py-2 text-sm font-medium rounded-lg transition-all ${
-                          formData.numberOfQuestions === num
+                        className={`px-4 py-2 text-sm font-medium rounded-lg transition-all ${formData.numberOfQuestions === num
                             ? "bg-blue-600 text-white shadow-md"
                             : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                        }`}
+                          }`}
                       >
                         {num}
                       </button>
@@ -206,9 +202,8 @@ function CreateQuiz() {
                     onChange={handleChange}
                     min="1"
                     max="180"
-                    className={`w-full px-4 py-3 rounded-xl bg-gray-50 text-gray-900 border-2 ${
-                      errors.timeLimit ? "border-red-400" : "border-gray-200"
-                    } focus:border-blue-500 focus:outline-none transition-colors`}
+                    className={`w-full px-4 py-3 rounded-xl bg-gray-50 text-gray-900 border-2 ${errors.timeLimit ? "border-red-400" : "border-gray-200"
+                      } focus:border-blue-500 focus:outline-none transition-colors`}
                   />
                   {errors.timeLimit && (
                     <p className="text-red-500 text-sm mt-1">{errors.timeLimit}</p>
@@ -220,11 +215,10 @@ function CreateQuiz() {
                         key={time}
                         type="button"
                         onClick={() => setFormData(prev => ({ ...prev, timeLimit: time }))}
-                        className={`px-4 py-2 text-sm font-medium rounded-lg transition-all ${
-                          formData.timeLimit === time
+                        className={`px-4 py-2 text-sm font-medium rounded-lg transition-all ${formData.timeLimit === time
                             ? "bg-blue-600 text-white shadow-md"
                             : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                        }`}
+                          }`}
                       >
                         {time}m
                       </button>

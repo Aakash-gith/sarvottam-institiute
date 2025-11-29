@@ -37,7 +37,7 @@ const EventsPage = ({ tasks, events, onTasksUpdate, onEventsUpdate }) => {
   const [notificationPermission, setNotificationPermission] = useState(
     typeof Notification !== "undefined" ? Notification.permission : "default"
   );
-  const [notificationOffset, setNotificationOffset] = useState("day"); 
+  const [notificationOffset, setNotificationOffset] = useState("day");
 
   // Effect: schedule notifications for upcoming events when permission is granted
   useEffect(() => {
@@ -124,8 +124,7 @@ const EventsPage = ({ tasks, events, onTasksUpdate, onEventsUpdate }) => {
       console.error("Error creating/updating task:", error);
       console.error("Task creation/update error response:", error.response?.data);
       alert(
-        `Failed to create/update task: ${
-          error.response?.data?.message || error.message
+        `Failed to create/update task: ${error.response?.data?.message || error.message
         }`
       );
     }
@@ -149,8 +148,7 @@ const EventsPage = ({ tasks, events, onTasksUpdate, onEventsUpdate }) => {
       console.error("Error updating task:", error);
       console.error("Task update error response:", error.response?.data);
       alert(
-        `Failed to update task: ${
-          error.response?.data?.message || error.message
+        `Failed to update task: ${error.response?.data?.message || error.message
         }`
       );
     }
@@ -166,8 +164,7 @@ const EventsPage = ({ tasks, events, onTasksUpdate, onEventsUpdate }) => {
       console.error("Error deleting task:", error);
       console.error("Task delete error response:", error.response?.data);
       alert(
-        `Failed to delete task: ${
-          error.response?.data?.message || error.message
+        `Failed to delete task: ${error.response?.data?.message || error.message
         }`
       );
     }
@@ -190,8 +187,7 @@ const EventsPage = ({ tasks, events, onTasksUpdate, onEventsUpdate }) => {
       console.error("Error deleting event:", error);
       console.error("Delete event error response:", error.response?.data);
       alert(
-        `Failed to delete event: ${
-          error.response?.data?.message || error.message
+        `Failed to delete event: ${error.response?.data?.message || error.message
         }`
       );
     }
@@ -353,9 +349,8 @@ const EventsPage = ({ tasks, events, onTasksUpdate, onEventsUpdate }) => {
                           className="h-5 w-5 rounded text-blue-600 focus:ring-blue-500 border-gray-300"
                         />
                         <p
-                          className={`font-semibold ${
-                            task.isCompleted ? "line-through text-gray-400" : "text-gray-900"
-                          }`}
+                          className={`font-semibold ${task.isCompleted ? "line-through text-gray-400" : "text-gray-900"
+                            }`}
                         >
                           {task.description}
                         </p>

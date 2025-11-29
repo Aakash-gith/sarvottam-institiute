@@ -5,7 +5,7 @@ import { BookOpen, TrendingUp, ChevronRight } from "lucide-react";
 
 function Learning() {
     const navigate = useNavigate();
-    
+
     return (
         <div className="flex h-screen bg-gray-50">
             <Navbar />
@@ -21,7 +21,7 @@ function Learning() {
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div 
+                            <div
                                 onClick={() => navigate('/notes')}
                                 className="bg-white p-8 rounded-xl border border-gray-200 hover:border-blue-400 hover:shadow-xl transition-all duration-300 cursor-pointer group transform hover:scale-[1.02]"
                             >
@@ -38,7 +38,7 @@ function Learning() {
                                 </button>
                             </div>
 
-                            <div 
+                            <div
                                 onClick={() => navigate('/notes')}
                                 className="bg-white p-8 rounded-xl border border-gray-200 hover:border-green-400 hover:shadow-xl transition-all duration-300 cursor-pointer group transform hover:scale-[1.02]"
                             >

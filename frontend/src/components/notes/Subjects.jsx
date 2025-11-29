@@ -113,16 +113,16 @@ function Subjects() {
                 <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-2xl shadow-md group-hover:shadow-lg group-hover:scale-110 transition-all duration-300">
                   {subject.icon}
                 </div>
-                
+
                 {/* Subject Info */}
                 <div className="flex-1">
                   <div className="flex items-center justify-between">
                     <h4 className="text-gray-900 font-bold text-lg group-hover:text-blue-600 transition-colors">
                       {subject.name}
                     </h4>
-                    <ChevronRight 
-                      size={20} 
-                      className="text-gray-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all duration-300" 
+                    <ChevronRight
+                      size={20}
+                      className="text-gray-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all duration-300"
                     />
                   </div>
                   <p className="text-sm text-gray-500 mt-1">
