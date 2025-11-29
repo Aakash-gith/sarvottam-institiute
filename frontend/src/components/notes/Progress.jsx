@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useEffect } from "react";
-import { classData, fetchSemesterProgress } from "../../classData";
+import { classData, fetchClassProgress } from "../../classData";
 import { TrendingUp, BookOpen, Video, Target } from "lucide-react";
 
 function Progress() {
@@ -22,7 +22,7 @@ function Progress() {
   useEffect(() => {
     const loadProgress = async () => {
       setLoading(true);
-      const data = await fetchSemesterProgress(currentClass);
+      const data = await fetchClassProgress(currentClass);
 
       if (data) {
         setCompletion(data.completion || 0);
