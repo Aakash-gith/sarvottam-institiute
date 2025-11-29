@@ -27,24 +27,43 @@ function SingleNotes() {
     return 9;
   }, []);
 
-  // Get subject info from static data
+  // Get subject info from static data (including sub-subjects)
   const subject = useMemo(() => {
-    return Object.values(classData)
-      .flatMap((cls) => cls.subjects)
-      .find((s) => s.id === parseInt(subjectId, 10));
+    const allSubjects = Object.values(classData).flatMap((cls) => cls.subjects);
+
+    // First check main subjects
+    const mainSubject = allSubjects.find((s) => s.id === parseInt(subjectId, 10));
+    if (mainSubject) return mainSubject;
+
+    // Then check sub-subjects (like Physics, Chemistry, Biology under Science)
+    for (const subj of allSubjects) {
+      if (subj.hasSubSubjects && subj.subSubjects) {
+        const subSubject = subj.subSubjects.find((ss) => ss.id === parseInt(subjectId, 10));
+        if (subSubject) return subSubject;
+      }
+    }
+
+    return null;
   }, [subjectId]);
 
   useEffect(() => {
     const loadContent = async () => {
       try {
         setLoading(true);
-        const response = await API.get(
-          `/subjectNotes/getContent?subjectId=${subjectId}&classId=${currentClass}`
-        );
-        setContent(response.data || { notes: [], videos: [] });
+
+        // Check if subject has local notes from classData
+        if (subject && subject.notes && subject.notes.length > 0) {
+          setContent({ notes: subject.notes, videos: [] });
+        } else {
+          // Fallback to API
+          const response = await API.get(
+            `/subjectNotes/getContent?subjectId=${subjectId}&classId=${currentClass}`
+          );
+          setContent(response.data || { notes: [], videos: [] });
+        }
 
         const progressResp = await API.get(
-          `/progress/getSubjectProgress?classId=${currentClass}`
+          `/progress/getSubjectProgress?semesterId=${currentClass}`
         );
 
         const subjectProg = Array.isArray(progressResp.data)
@@ -63,13 +82,19 @@ function SingleNotes() {
         }
       } catch (error) {
         console.error("Error loading content:", error);
+        // If API fails but we have local notes, use them
+        if (subject && subject.notes && subject.notes.length > 0) {
+          setContent({ notes: subject.notes, videos: [] });
+        }
       } finally {
         setLoading(false);
       }
     };
 
-    loadContent();
-  }, [subjectId, currentClass]);
+    if (subject) {
+      loadContent();
+    }
+  }, [subjectId, currentClass, subject]);
 
   if (!subject) {
     return (
@@ -117,12 +142,21 @@ function SingleNotes() {
 
   // Mark note handler
   const handleMarkNote = async (noteId) => {
-    if (trackedItems.notes.includes(noteId)) return;
-    if (pendingMarks.notes[noteId]) return;
+    console.log("handleMarkNote called with noteId:", noteId);
+
+    if (trackedItems.notes.includes(noteId)) {
+      console.log("Note already tracked, skipping");
+      return;
+    }
+    if (pendingMarks.notes && pendingMarks.notes[noteId]) {
+      console.log("Note already pending, skipping");
+      return;
+    }
 
     setPendingMarks((p) => ({ ...p, notes: { ...(p.notes || {}), [noteId]: true } }));
 
     try {
+      console.log("Calling markNoteRead API...");
       const resp = await markNoteRead({
         subjectId: parseInt(subjectId, 10),
         semesterId: currentClass,
@@ -131,20 +165,26 @@ function SingleNotes() {
         totalLectures: content.videos.length,
       });
 
-      const progress = resp?.data?.progress ?? resp?.data ?? resp?.progress;
+      console.log("markNoteRead response:", resp);
 
+      // Update tracked items
       setTrackedItems((prev) => ({
         ...prev,
         notes: [...(prev.notes || []), noteId],
       }));
 
+      // Extract progress from response
+      const progress = resp?.progress || resp;
       if (progress && typeof progress.completion === "number") {
         setSubjectProgress(progress.completion);
-      } else if (resp?.data?.completion && typeof resp.data.completion === "number") {
-        setSubjectProgress(resp.data.completion);
       }
     } catch (err) {
       console.error("Error marking note as read:", err);
+      // Still update UI even if API fails (optimistic update)
+      setTrackedItems((prev) => ({
+        ...prev,
+        notes: [...(prev.notes || []), noteId],
+      }));
     } finally {
       setPendingMarks((p) => {
         const next = { ...(p || {}) };
@@ -197,6 +237,12 @@ function SingleNotes() {
     }
   };
 
+  const getSubjectGradient = () => {
+    if (subject.color === "purple") return "from-purple-500 to-purple-600";
+    if (subject.color === "green") return "from-green-500 to-green-600";
+    return "from-blue-500 to-blue-600";
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-6">
       {/* Header */}
@@ -213,12 +259,12 @@ function SingleNotes() {
           <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div className="flex items-center gap-4">
-                <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-3xl shadow-md">
+                <div className={`w-16 h-16 rounded-xl bg-gradient-to-br ${getSubjectGradient()} flex items-center justify-center text-3xl shadow-md`}>
                   {subject.icon}
                 </div>
                 <div>
                   <h1 className="text-2xl md:text-3xl font-bold text-gray-900">{subject.name}</h1>
-                  <p className="text-gray-500">{subject.description}</p>
+                  <p className="text-gray-500">{content.notes.length} Chapters available</p>
                 </div>
               </div>
 
@@ -272,8 +318,8 @@ function SingleNotes() {
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
               className={`flex items-center gap-2 px-6 py-3 font-semibold rounded-xl transition-all duration-300 ${activeTab === tab.key
-                  ? "bg-blue-600 text-white shadow-md"
-                  : "bg-white text-gray-600 hover:bg-gray-100 border border-gray-200"
+                ? "bg-blue-600 text-white shadow-md"
+                : "bg-white text-gray-600 hover:bg-gray-100 border border-gray-200"
                 }`}
             >
               <tab.icon size={18} />
@@ -287,69 +333,63 @@ function SingleNotes() {
         </div>
 
         {/* Content */}
-        <div className="space-y-4">
+        <div className="space-y-3">
           {activeTab === "Notes" && (
             <>
               {content.notes.length > 0 ? (
                 content.notes.map((note, index) => {
+                  const noteId = note._id || note.id;
                   const driveId = getGoogleDriveId(note.fileUrl);
-                  const isDone = trackedItems.notes.includes(note._id);
-                  const isPending = pendingMarks.notes && pendingMarks.notes[note._id];
+                  const localFile = note.file; // For local PDFs
+                  const driveUrl = driveId ? `https://drive.google.com/file/d/${driveId}/view` : null;
+                  const pdfUrl = localFile || driveUrl;
+                  const isDone = trackedItems.notes.includes(noteId);
+                  const isPending = pendingMarks.notes && pendingMarks.notes[noteId];
 
                   return (
                     <div
-                      key={note._id}
-                      className={`bg-white rounded-xl p-5 border transition-all duration-300 hover:shadow-lg ${isDone ? "border-green-300 bg-green-50/50" : "border-gray-200 hover:border-blue-300"
+                      key={noteId}
+                      onClick={() => pdfUrl && window.open(pdfUrl, '_blank')}
+                      className={`bg-white rounded-xl p-4 border transition-all duration-300 hover:shadow-md cursor-pointer group ${isDone ? "border-green-300 bg-green-50/50" : "border-gray-200 hover:border-blue-400"
                         }`}
                     >
-                      <div className="flex items-start justify-between gap-4 mb-4">
-                        <div className="flex items-start gap-4">
-                          <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${isDone
-                              ? "bg-green-100 text-green-600"
-                              : "bg-red-100 text-red-500"
+                      <div className="flex items-center justify-between gap-4">
+                        <div className="flex items-center gap-4 flex-1 min-w-0">
+                          <div className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 ${isDone
+                            ? "bg-green-100 text-green-600"
+                            : "bg-blue-100 text-blue-600 group-hover:bg-blue-200"
                             }`}>
-                            {isDone ? <CheckCircle size={24} /> : <FileText size={24} />}
+                            {isDone ? <CheckCircle size={22} /> : <FileText size={22} />}
                           </div>
-                          <div>
+                          <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2">
-                              <span className="text-xs font-medium text-gray-400">#{index + 1}</span>
-                              <h3 className="text-gray-900 font-bold text-lg">{note.title}</h3>
+                              <span className="text-xs font-semibold text-gray-400">Ch {index + 1}</span>
+                              <h3 className="text-gray-900 font-semibold truncate group-hover:text-blue-600 transition-colors">{note.title}</h3>
                             </div>
-                            <p className="text-xs text-gray-500 mt-1">
-                              {note.fileType?.toUpperCase() || "PDF"} Document
+                            <p className="text-xs text-gray-500 mt-0.5">
+                              {note.fileType?.toUpperCase() || "PDF"} • Click to open
                             </p>
-                            {note.description && (
-                              <p className="text-sm text-gray-600 mt-2">{note.description}</p>
-                            )}
                           </div>
                         </div>
 
-                        <button
-                          onClick={() => handleMarkNote(note._id)}
-                          disabled={isDone || isPending}
-                          className={`px-5 py-2.5 rounded-lg font-medium transition-all duration-300 shrink-0 ${isDone
+                        <div className="flex items-center gap-2 shrink-0">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleMarkNote(noteId);
+                            }}
+                            disabled={isDone || isPending}
+                            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 ${isDone
                               ? "bg-green-100 text-green-700 cursor-default"
                               : isPending
                                 ? "bg-blue-400 text-white cursor-wait"
-                                : "bg-blue-600 text-white hover:bg-blue-700 hover:shadow-md cursor-pointer"
-                            }`}
-                        >
-                          {isDone ? "✓ Completed" : isPending ? "Marking..." : "Mark as Read"}
-                        </button>
-                      </div>
-
-                      {driveId && (
-                        <div className="mt-4 rounded-xl overflow-hidden border border-gray-200 shadow-sm">
-                          <iframe
-                            src={`https://drive.google.com/file/d/${driveId}/preview`}
-                            width="100%"
-                            height="480"
-                            allow="autoplay"
-                            title={note.title}
-                            className="bg-gray-100"
-                          ></iframe>
+                                : "bg-blue-600 text-white hover:bg-blue-700 cursor-pointer"
+                              }`}
+                          >
+                            {isDone ? "✓ Done" : isPending ? "..." : "Mark Read"}
+                          </button>
                         </div>
-                      )}
+                      </div>
                     </div>
                   );
                 })
@@ -380,8 +420,8 @@ function SingleNotes() {
                       <div className="flex items-start justify-between gap-4 mb-4">
                         <div className="flex items-start gap-4">
                           <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${isDone
-                              ? "bg-green-100 text-green-600"
-                              : "bg-red-100 text-red-500"
+                            ? "bg-green-100 text-green-600"
+                            : "bg-red-100 text-red-500"
                             }`}>
                             {isDone ? <CheckCircle size={24} /> : <Play size={24} />}
                           </div>
@@ -403,10 +443,10 @@ function SingleNotes() {
                           onClick={() => handleMarkVideo(video._id)}
                           disabled={isDone || isPending}
                           className={`px-5 py-2.5 rounded-lg font-medium transition-all duration-300 shrink-0 ${isDone
-                              ? "bg-green-100 text-green-700 cursor-default"
-                              : isPending
-                                ? "bg-red-400 text-white cursor-wait"
-                                : "bg-red-500 text-white hover:bg-red-600 hover:shadow-md cursor-pointer"
+                            ? "bg-green-100 text-green-700 cursor-default"
+                            : isPending
+                              ? "bg-red-400 text-white cursor-wait"
+                              : "bg-red-500 text-white hover:bg-red-600 hover:shadow-md cursor-pointer"
                             }`}
                         >
                           {isDone ? "✓ Watched" : isPending ? "Marking..." : "Mark as Watched"}

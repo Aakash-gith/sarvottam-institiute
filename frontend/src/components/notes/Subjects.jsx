@@ -5,11 +5,12 @@ import {
   initClassProgress,
 } from "../../classData";
 import { useNavigate } from "react-router-dom";
-import { BookOpen, Video, ChevronRight, TrendingUp } from "lucide-react";
+import { BookOpen, Video, ChevronRight, TrendingUp, ArrowLeft } from "lucide-react";
 
 function Subjects() {
   const [subjectsProgress, setSubjectsProgress] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedSubject, setSelectedSubject] = useState(null);
   const navigate = useNavigate();
 
   const studentId = useMemo(() => {
@@ -70,10 +71,23 @@ function Subjects() {
     const progressData = subjectsProgress.find(
       (p) => p.subjectId === subject.id
     );
+
+    // Calculate total notes count
+    let totalNotes = 0;
+    if (subject.hasSubSubjects && subject.subSubjects) {
+      // For Science: sum notes from all sub-subjects
+      totalNotes = subject.subSubjects.reduce((sum, ss) => sum + (ss.notes?.length || 0), 0);
+    } else {
+      // For regular subjects like Maths
+      totalNotes = subject.notes?.length || 0;
+    }
+
     return {
       ...subject,
-      lectures: progressData?.videosCompleted?.length || 0,
-      notes: progressData?.notesCompleted?.length || 0,
+      lecturesCompleted: progressData?.videosCompleted?.length || 0,
+      notesCompleted: progressData?.notesCompleted?.length || 0,
+      totalNotes: totalNotes,
+      totalLectures: 0, // No videos yet
       completion: progressData?.completion ?? 0,
     };
   });
@@ -84,6 +98,71 @@ function Subjects() {
         <div className="flex flex-col items-center gap-3">
           <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
           <span className="text-gray-500 text-sm">Loading subjects...</span>
+        </div>
+      </div>
+    );
+  }
+
+  const getSubSubjectColor = (color) => {
+    const colors = {
+      blue: "from-blue-500 to-blue-600",
+      purple: "from-purple-500 to-purple-600",
+      green: "from-green-500 to-green-600",
+    };
+    return colors[color] || colors.blue;
+  };
+
+  const getSubSubjectBgColor = (color) => {
+    const colors = {
+      blue: "bg-blue-50 border-blue-200 hover:border-blue-400",
+      purple: "bg-purple-50 border-purple-200 hover:border-purple-400",
+      green: "bg-green-50 border-green-200 hover:border-green-400",
+    };
+    return colors[color] || colors.blue;
+  };
+
+  // If a subject with sub-subjects is selected, show sub-subjects view
+  if (selectedSubject && selectedSubject.hasSubSubjects) {
+    return (
+      <div className="bg-white rounded-xl p-6 md:p-8">
+        <div className="mb-6">
+          <button
+            onClick={() => setSelectedSubject(null)}
+            className="flex items-center gap-2 text-gray-600 hover:text-blue-600 transition-colors mb-4"
+          >
+            <ArrowLeft size={20} />
+            <span className="font-medium">Back to Subjects</span>
+          </button>
+          <h3 className="text-xl md:text-2xl font-bold text-gray-900">
+            {selectedSubject.name}
+          </h3>
+          <p className="text-gray-500 text-sm mt-1">
+            Select a branch to view notes
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {selectedSubject.subSubjects.map((subSubject) => (
+            <div
+              key={subSubject.id}
+              onClick={() => navigate(`/notes/${subSubject.id}`)}
+              className={`rounded-xl p-6 border-2 ${getSubSubjectBgColor(subSubject.color)} hover:shadow-lg transition-all duration-300 cursor-pointer group transform hover:scale-[1.02]`}
+            >
+              <div className={`w-16 h-16 rounded-xl bg-gradient-to-br ${getSubSubjectColor(subSubject.color)} flex items-center justify-center text-3xl shadow-md group-hover:shadow-lg group-hover:scale-110 transition-all duration-300 mb-4`}>
+                {subSubject.icon}
+              </div>
+              <h4 className="text-gray-900 font-bold text-lg group-hover:text-blue-600 transition-colors">
+                {subSubject.name}
+              </h4>
+              <p className="text-sm text-gray-500 mt-1">
+                {subSubject.notes?.length || 0} Chapters available
+              </p>
+              <div className="flex items-center gap-2 mt-4 text-sm font-medium text-gray-600 group-hover:text-blue-600">
+                <span>View Notes</span>
+                <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform" />
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     );
@@ -105,7 +184,13 @@ function Subjects() {
           subjectsWithProgress.map((subject) => (
             <div
               key={subject.id}
-              onClick={() => navigate(`/notes/${subject.id}`)}
+              onClick={() => {
+                if (subject.hasSubSubjects) {
+                  setSelectedSubject(subject);
+                } else {
+                  navigate(`/notes/${subject.id}`);
+                }
+              }}
               className="bg-gray-50 rounded-xl p-5 border border-gray-200 hover:border-blue-400 hover:shadow-lg hover:bg-blue-50/30 transition-all duration-300 cursor-pointer group transform hover:scale-[1.02]"
             >
               <div className="flex items-start gap-4 mb-4">
@@ -136,13 +221,13 @@ function Subjects() {
                 <div className="flex items-center gap-2 px-3 py-1.5 bg-blue-100 rounded-lg">
                   <Video size={14} className="text-blue-600" />
                   <span className="text-xs font-medium text-blue-700">
-                    {subject.lectures} Lecture{subject.lectures !== 1 ? "s" : ""}
+                    {subject.totalLectures} Lecture{subject.totalLectures !== 1 ? "s" : ""}
                   </span>
                 </div>
                 <div className="flex items-center gap-2 px-3 py-1.5 bg-amber-100 rounded-lg">
                   <BookOpen size={14} className="text-amber-600" />
                   <span className="text-xs font-medium text-amber-700">
-                    {subject.notes} Note{subject.notes !== 1 ? "s" : ""}
+                    {subject.totalNotes} Note{subject.totalNotes !== 1 ? "s" : ""}
                   </span>
                 </div>
               </div>

@@ -22,14 +22,19 @@ function Progress() {
   useEffect(() => {
     const loadProgress = async () => {
       setLoading(true);
-      const data = await fetchClassProgress(currentClass);
-
-      if (data) {
-        setCompletion(data.completion || 0);
-      } else {
+      try {
+        const data = await fetchClassProgress(currentClass);
+        if (data) {
+          setCompletion(data.completion || 0);
+        } else {
+          setCompletion(0);
+        }
+      } catch (error) {
+        console.error("Failed to load progress:", error);
         setCompletion(0);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
 
     loadProgress();
@@ -50,7 +55,7 @@ function Progress() {
 
   return (
     <div className="bg-white rounded-xl p-6 md:p-8 shadow-sm border border-gray-100">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div className="flex flex-col md:flex-row md:items-stretch justify-between gap-6">
         {/* Left Side - Title and Progress */}
         <div className="flex-1">
           <div className="flex items-center gap-3 mb-4">
@@ -91,14 +96,14 @@ function Progress() {
         </div>
 
         {/* Right Side - Quick Stats */}
-        <div className="flex gap-4 md:gap-6">
-          <div className="bg-blue-50 rounded-xl p-4 text-center border border-blue-100 min-w-[100px]">
-            <BookOpen size={24} className="text-blue-600 mx-auto mb-2" />
+        <div className="flex gap-4 flex-shrink-0 self-stretch">
+          <div className="bg-blue-50 rounded-xl px-6 py-4 text-center border border-blue-100 flex flex-col items-center justify-center min-w-[120px]">
+            <BookOpen size={24} className="text-blue-600 mb-2" />
             <p className="text-2xl font-bold text-gray-900">--</p>
             <p className="text-xs text-gray-500">Notes Read</p>
           </div>
-          <div className="bg-red-50 rounded-xl p-4 text-center border border-red-100 min-w-[100px]">
-            <Video size={24} className="text-red-500 mx-auto mb-2" />
+          <div className="bg-red-50 rounded-xl px-6 py-4 text-center border border-red-100 flex flex-col items-center justify-center min-w-[120px]">
+            <Video size={24} className="text-red-500 mb-2" />
             <p className="text-2xl font-bold text-gray-900">--</p>
             <p className="text-xs text-gray-500">Videos Watched</p>
           </div>

@@ -61,49 +61,51 @@ function HeaderBar() {
   };
 
   return (
-    <div className="h-20 bg-gradient-to-r from-gray-800 to-gray-900 border-b border-white/10 flex items-center justify-between px-6 shadow-lg">
+    <div className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6 shadow-sm rounded-xl">
       {/* Left Section - Time */}
-      <div className="flex items-center gap-4">
-        <Clock size={20} className="text-red-500" />
-        <div className="text-white text-sm font-medium">{currentTime}</div>
+      <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 bg-gray-100 px-3 py-1.5 rounded-lg">
+          <Clock size={16} className="text-blue-600" />
+          <div className="text-gray-700 text-sm font-medium">{currentTime}</div>
+        </div>
       </div>
 
       {/* Right Section - Actions */}
-      <div className="flex items-center gap-6">
+      <div className="flex items-center gap-4">
         {/* Streak */}
-        <div className="flex items-center gap-2 text-white/80 hover:text-white transition">
-          <Flame size={20} className="text-orange-500" />
-          <span className="text-sm font-medium">{userData?.streak || 0} day streak</span>
+        <div className="flex items-center gap-2 bg-orange-50 px-3 py-1.5 rounded-lg border border-orange-200">
+          <Flame size={18} className="text-orange-500" />
+          <span className="text-sm font-medium text-orange-700">{userData?.streak || 0} day streak</span>
         </div>
 
         {/* Notifications */}
         <button
           onClick={() => setShowNotifications(!showNotifications)}
-          className="relative text-white/60 hover:text-white transition-colors"
+          className="relative p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
         >
           <Bell size={20} />
-          <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">3</span>
+          <span className="absolute -top-0.5 -right-0.5 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center text-[10px] font-bold">3</span>
         </button>
 
         {/* Profile Picture & Menu */}
-        <div className="flex items-center gap-3 pl-6 border-l border-white/10">
+        <div className="flex items-center gap-3 pl-4 border-l border-gray-200">
           <div className="text-right">
-            <p className="text-white text-sm font-medium">{userData?.name?.split(" ")[0]}</p>
-            <p className="text-white/50 text-xs">Class {userData?.class === 9 ? "IX" : "X"}</p>
+            <p className="text-gray-800 text-sm font-medium">{userData?.name?.split(" ")[0]}</p>
+            <p className="text-gray-500 text-xs">Class {userData?.class === 9 ? "IX" : "X"}</p>
           </div>
           {profilePicture ? (
             <img
               src={getProfilePictureUrl()}
               alt="Profile"
-              className="w-10 h-10 rounded-full border-2 border-red-500 cursor-pointer hover:border-red-400 transition"
+              className="w-9 h-9 rounded-full border-2 border-blue-500 cursor-pointer hover:border-blue-400 transition shadow-sm"
               onClick={() => navigate("/profile")}
             />
           ) : (
             <button
               onClick={() => navigate("/profile")}
-              className="w-10 h-10 rounded-full bg-red-600 hover:bg-red-700 transition flex items-center justify-center text-white"
+              className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 transition flex items-center justify-center text-white shadow-sm"
             >
-              <User size={20} />
+              <User size={18} />
             </button>
           )}
         </div>
@@ -111,9 +113,9 @@ function HeaderBar() {
         {/* Logout */}
         <button
           onClick={handleLogout}
-          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white transition-all font-medium text-sm"
+          className="flex items-center gap-2 px-4 py-2 rounded-lg border border-red-200 bg-red-50 hover:bg-red-100 text-red-600 transition-all font-medium text-sm"
         >
-          <LogOut size={18} />
+          <LogOut size={16} />
           <span>Logout</span>
         </button>
       </div>

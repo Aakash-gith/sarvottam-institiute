@@ -1,15 +1,14 @@
 import React from "react";
-import { HeaderBar, Navbar, Progress, Subjects } from "../components/index.components";
+import { Navbar, Progress, Subjects } from "../components/index.components";
 
 function Notes() {
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex flex-col min-h-screen bg-gray-50">
       <Navbar />
 
       {/* Main Content Area */}
-      <div className="flex-1 transition-all duration-300">
-        <div className="p-6 md:p-10 rounded-lg gap-5 flex flex-col h-full overflow-auto">
-          <HeaderBar />
+      <div className="flex-1 mt-16">
+        <div className="p-6 md:p-10 max-w-7xl mx-auto flex flex-col gap-6">
           <Progress />
           <Subjects />
         </div>
