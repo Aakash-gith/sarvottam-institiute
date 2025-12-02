@@ -8,8 +8,6 @@ import {
   index,
   forgotPass,
   events,
-  maps,
-  news,
   notes,
   subjectNotes,
   quiz,
