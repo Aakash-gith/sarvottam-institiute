@@ -124,7 +124,7 @@ export const classData = {
 export const initClassProgress = async (classId, subjects) => {
     try {
         return await API.post("/progress/initSemester", {
-            semesterId: classId,
+            classId: classId,
             subjects,
         });
     } catch (error) {
@@ -135,7 +135,7 @@ export const initClassProgress = async (classId, subjects) => {
 export const fetchClassProgress = async (userClass) => {
     try {
         const response = await API.get(
-            `/progress/getSemesterProgress?semester=${userClass}`
+            `/progress/getSemesterProgress?classId=${userClass}`
         );
         return response.data;
     } catch (error) {
@@ -147,7 +147,7 @@ export const fetchClassProgress = async (userClass) => {
 export const fetchSubjectProgress = async (classId) => {
     try {
         const response = await API.get(
-            `/progress/getSubjectProgress?semesterId=${classId}`
+            `/progress/getSubjectProgress?classId=${classId}`
         );
         return response.data;
     } catch (error) {

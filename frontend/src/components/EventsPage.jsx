@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from "react";
-import { Trash2, Plus, Edit2, Divide } from "lucide-react";
+import { Trash2, Plus, Edit2, Divide, Calendar } from "lucide-react";
 import {
   createTask,
   updateTask,
@@ -384,95 +384,126 @@ const EventsPage = ({ tasks, events, onTasksUpdate, onEventsUpdate }) => {
 
       {/* Events Section */}
       <section>
-        <h2 className="text-3xl font-bold mb-4">Manage Deadlines & Events</h2>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+          <h2 className="text-3xl font-bold text-gray-900">Events & Deadlines</h2>
+          <button
+            onClick={handleOpenModal}
+            className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-5 rounded-lg flex items-center gap-2 transition-all shadow-sm hover:shadow-md"
+          >
+            <Plus className="w-5 h-5" /> Add Event
+          </button>
+        </div>
 
-        <div className="bg-gray-50 p-3 rounded-md mb-4 flex items-center justify-between gap-4 border border-gray-200">
-          <div className="flex items-center gap-3">
-            <label
-              htmlFor="notification-time"
-              className="font-medium text-sm sm:text-base text-gray-700"
-            >
-              Notify me:
-            </label>
-            <select
-              id="notification-time"
-              value={notificationOffset}
-              onChange={(e) => setNotificationOffset(e.target.value)}
-              disabled={notificationPermission !== "granted"}
-              className="bg-white border border-gray-300 rounded-md p-2 text-sm focus:ring-2 focus:ring-blue-200 focus:border-blue-500 disabled:opacity-50 disabled:cursor-not-allowed text-gray-900"
-            >
-              <option value="none">Don't notify</option>
-              <option value="day">1 day before</option>
-              <option value="hour">1 hour before</option>
-              <option value="30min">30 minutes before</option>
-            </select>
+        <div className="bg-white p-4 rounded-xl mb-6 border border-gray-200 shadow-sm">
+          <div className="flex items-center justify-between gap-4 flex-wrap">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-blue-50 text-blue-600 rounded-lg">
+                <Calendar className="w-5 h-5" />
+              </div>
+              <div>
+                <label
+                  htmlFor="notification-time"
+                  className="font-semibold text-gray-900 block"
+                >
+                  Event Reminders
+                </label>
+                <p className="text-xs text-gray-500">Get notified before events start</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <select
+                id="notification-time"
+                value={notificationOffset}
+                onChange={(e) => setNotificationOffset(e.target.value)}
+                disabled={notificationPermission !== "granted"}
+                className="bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed text-gray-900 min-w-[140px]"
+              >
+                <option value="none">No notifications</option>
+                <option value="day">1 day before</option>
+                <option value="hour">1 hour before</option>
+                <option value="30min">30 mins before</option>
+              </select>
+
+              {notificationPermission !== "granted" && (
+                <button
+                  onClick={requestNotificationPermission}
+                  className="text-blue-600 hover:text-blue-700 font-medium text-sm hover:underline"
+                >
+                  Enable
+                </button>
+              )}
+            </div>
           </div>
-          {notificationPermission !== "granted" && (
-            <button
-              onClick={requestNotificationPermission}
-              className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-3 rounded-md text-sm transition-colors shadow-sm"
-            >
-              Enable Notifications
-            </button>
-          )}
           {notificationPermission === "denied" && (
-            <p className="text-xs text-yellow-600">
-              Notifications are blocked in your browser.
-            </p>
+            <div className="mt-3 text-xs text-amber-600 bg-amber-50 px-3 py-2 rounded-lg border border-amber-100">
+              ⚠️ Notifications are blocked in your browser settings.
+            </div>
           )}
         </div>
 
-        <div className="bg-gray-50 p-4 rounded-lg mb-6 flex flex-col md:flex-row gap-4 items-end border border-gray-200">
-          <div className="flex items-center gap-3 justify-between w-full">
-            <label className="block text-sm font-medium text-gray-700">
-              Create New Events
-            </label>
-
-            <button
-              onClick={handleOpenModal}
-              className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md flex items-center gap-2 transition-colors shadow-sm"
-            >
-              <Plus className="w-5 h-5" /> Add Event
-            </button>
-          </div>
-        </div>
-
-        <div className="space-y-3">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {events.map((ev) => (
             <div
               key={ev._id}
-              className="bg-white p-3 rounded-lg border border-gray-200 flex items-center justify-between hover:shadow-sm transition-shadow"
+              className="group bg-white p-5 rounded-xl border border-gray-200 hover:border-blue-300 hover:shadow-md transition-all duration-300 flex flex-col justify-between h-full"
             >
               <div>
-                <p className="font-semibold text-gray-900">{ev.title}</p>
-                <p className="text-sm text-gray-600">{ev.event}</p>
-                <p className="text-sm text-gray-500">
-                  {new Date(ev.date).toLocaleDateString("en-US", {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                    timeZone: "UTC",
-                  })}
-                </p>
+                <div className="flex items-start justify-between gap-2 mb-3">
+                  <div className="p-2 bg-blue-50 text-blue-600 rounded-lg group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                    <Calendar className="w-5 h-5" />
+                  </div>
+                  <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button
+                      onClick={() => handleEditEvent(ev)}
+                      className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                      title="Edit"
+                    >
+                      <Edit2 className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => deleteEvent(ev._id)}
+                      className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                      title="Delete"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+
+                <h3 className="font-bold text-gray-900 text-lg mb-1 line-clamp-1" title={ev.title}>{ev.title}</h3>
+                <p className="text-sm text-gray-600 mb-4 line-clamp-2 h-10" title={ev.event}>{ev.event}</p>
               </div>
-              <div className="flex items-center gap-3">
-                <button
-                  onClick={() => handleEditEvent(ev)}
-                  className="text-gray-400 hover:text-blue-600 transition-colors"
-                >
-                  <Edit2 className="w-5 h-5" />
-                </button>
-                <button
-                  onClick={() => deleteEvent(ev._id)}
-                  className="text-red-400 hover:text-red-600 transition-colors"
-                >
-                  <Trash2 className="w-6 h-6" />
-                </button>
+
+              <div className="pt-4 border-t border-gray-100 flex items-center justify-between text-xs font-medium text-gray-500">
+                <span>
+                  {new Date(ev.date).toLocaleDateString("en-US", {
+                    weekday: "short",
+                    month: "short",
+                    day: "numeric",
+                  })}
+                </span>
+                <span className="bg-gray-100 px-2 py-1 rounded text-gray-600">
+                  {new Date(ev.date).getFullYear()}
+                </span>
               </div>
             </div>
           ))}
+
           {events.length === 0 && (
-            <p className="text-gray-500">You have no events. Add one above!</p>
+            <div className="col-span-full py-12 text-center bg-gray-50 rounded-xl border-2 border-dashed border-gray-200">
+              <div className="w-16 h-16 bg-gray-100 text-gray-400 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Calendar className="w-8 h-8" />
+              </div>
+              <h3 className="text-lg font-medium text-gray-900">No events yet</h3>
+              <p className="text-gray-500 mt-1 mb-4">Create your first event to get started</p>
+              <button
+                onClick={handleOpenModal}
+                className="text-blue-600 font-medium hover:underline"
+              >
+                Create Event
+              </button>
+            </div>
           )}
         </div>
       </section>

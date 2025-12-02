@@ -1,23 +1,24 @@
 import Progress from "../models/Progress.js";
+
 // ----  set all subjects in progress ----
 export const initSemesterProgress = async (req, res) => {
   try {
     const userId = req.user?.id;
     if (!userId) return res.status(401).json({ message: "Unauthorized" });
 
-    const { semesterId, subjects } = req.body;
+    const { classId, subjects } = req.body;
 
-    if (!semesterId || !subjects || !Array.isArray(subjects)) {
+    if (!classId || !subjects || !Array.isArray(subjects)) {
       return res.status(400).json({ message: "Invalid request data" });
     }
 
-    const semId = parseInt(semesterId, 10);
+    const clsId = parseInt(classId, 10);
     const newSubjectIds = subjects.map((s) => s.id);
 
 
     const existingProgress = await Progress.find({
       studentId: userId,
-      semesterId: semId,
+      classId: clsId,
     });
 
     const existingIds = existingProgress.map((p) => p.subjectId);
@@ -30,11 +31,11 @@ export const initSemesterProgress = async (req, res) => {
     if (toAdd.length > 0) {
       const bulkAdd = toAdd.map((subjectId) => ({
         updateOne: {
-          filter: { studentId: userId, semesterId: semId, subjectId },
+          filter: { studentId: userId, classId: clsId, subjectId },
           update: {
             $setOnInsert: {
               studentId: userId,
-              semesterId: semId,
+              classId: clsId,
               subjectId,
               notesCompleted: [],
               videosCompleted: [],
@@ -52,18 +53,18 @@ export const initSemesterProgress = async (req, res) => {
     if (toRemove.length > 0) {
       await Progress.deleteMany({
         studentId: userId,
-        semesterId: semId,
+        classId: clsId,
         subjectId: { $in: toRemove },
       });
     }
 
     const updated = await Progress.find({
       studentId: userId,
-      semesterId: semId,
+      classId: clsId,
     }).sort({ subjectId: 1 });
 
     return res.status(200).json({
-      message: "Semester progress synced successfully",
+      message: "Class progress synced successfully",
       added: toAdd,
       removed: toRemove,
       progress: updated,
@@ -99,22 +100,22 @@ export const getSemesterProgress = async (req, res) => {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
-    const { semester } = req.query;
-    if (!semester) {
-      return res.status(400).json({ message: "Semester parameter required" });
+    const { classId } = req.query;
+    if (!classId) {
+      return res.status(400).json({ message: "Class parameter required" });
     }
 
-    const semesterId = parseInt(semester, 10);
+    const classIdNum = parseInt(classId, 10);
 
     const progressRecords = await Progress.find({
       studentId: userId,
-      semesterId,
+      classId: classIdNum,
     });
 
     if (progressRecords.length === 0) {
       return res.status(200).json({
         completion: 0,
-        semesterId,
+        classId: classIdNum,
         studentId: userId,
       });
     }
@@ -126,7 +127,7 @@ export const getSemesterProgress = async (req, res) => {
 
     return res.status(200).json({
       completion: Math.round(avg),
-      semesterId,
+      classId: classIdNum,
       studentId: userId,
       subjectCount: progressRecords.length,
     });
@@ -144,18 +145,18 @@ export const getSubjectProgress = async (req, res) => {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
-    const { semesterId } = req.query;
-    if (!semesterId) {
+    const { classId } = req.query;
+    if (!classId) {
       return res
         .status(400)
-        .json({ message: "Semester ID parameter required" });
+        .json({ message: "Class ID parameter required" });
     }
 
-    const semesterIdNum = parseInt(semesterId, 10);
+    const classIdNum = parseInt(classId, 10);
 
     const progressRecords = await Progress.find({
       studentId: userId,
-      semesterId: semesterIdNum,
+      classId: classIdNum,
     }).sort({ subjectId: 1 });
 
     return res.status(200).json(progressRecords);
@@ -199,32 +200,35 @@ export const markNoteRead = async (req, res) => {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
-    const { subjectId, semesterId, noteId, totalNotes, totalLectures } =
+    const { subjectId, classId, noteId, totalNotes, totalLectures } =
       req.body;
 
-    if (!subjectId || !semesterId || !noteId) {
+    if (!subjectId || !classId || !noteId) {
       return res.status(400).json({
-        message: "subjectId, semesterId and noteId are required",
+        message: "subjectId, classId and noteId are required",
       });
     }
 
     const subjectIdNum = parseInt(subjectId, 10);
-    const semesterIdNum = parseInt(semesterId, 10);
+    const classIdNum = parseInt(classId, 10);
+    const noteIdStr = String(noteId);
+    const totalNotesNum = parseInt(totalNotes, 10) || 0;
+    const totalLecturesNum = parseInt(totalLectures, 10) || 0;
 
     let progress = await Progress.findOne({
       studentId: userId,
       subjectId: subjectIdNum,
-      semesterId: semesterIdNum,
+      classId: classIdNum,
     });
 
     // If no doc exists yet, create one with this note marked
     if (!progress) {
-      const notesCompleted = [noteId];
+      const notesCompleted = [noteIdStr];
       const videosCompleted = [];
 
       const completion = computeCompletion({
-        totalNotes,
-        totalLectures,
+        totalNotes: totalNotesNum,
+        totalLectures: totalLecturesNum,
         notesCompletedCount: notesCompleted.length,
         videosCompletedCount: videosCompleted.length,
       });
@@ -232,7 +236,7 @@ export const markNoteRead = async (req, res) => {
       progress = await Progress.create({
         studentId: userId,
         subjectId: subjectIdNum,
-        semesterId: semesterIdNum,
+        classId: classIdNum,
         notesRead: 1,
         lecturesWatched: 0,
         notesCompleted,
@@ -247,7 +251,7 @@ export const markNoteRead = async (req, res) => {
     // If already marked, do nothing (idempotent)
     if (
       Array.isArray(progress.notesCompleted) &&
-      progress.notesCompleted.includes(noteId)
+      progress.notesCompleted.includes(noteIdStr)
     ) {
       return res
         .status(200)
@@ -255,12 +259,12 @@ export const markNoteRead = async (req, res) => {
     }
 
     // Mark as read
-    progress.notesCompleted.push(noteId);
+    progress.notesCompleted.push(noteIdStr);
     progress.notesRead = (progress.notesRead || 0) + 1;
 
     const completion = computeCompletion({
-      totalNotes,
-      totalLectures,
+      totalNotes: totalNotesNum,
+      totalLectures: totalLecturesNum,
       notesCompletedCount: progress.notesCompleted.length,
       videosCompletedCount: progress.videosCompleted?.length || 0,
     });
@@ -275,12 +279,11 @@ export const markNoteRead = async (req, res) => {
     progress.notesCompleted = [...progress.notesCompleted];
 
     await progress.save();
-    console.log("Note marked as read and saved:", { noteId, notesCompleted: progress.notesCompleted });
 
     return res.status(200).json({ message: "Note marked as read", progress });
   } catch (error) {
     console.error("markNoteRead error:", error);
-    return res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ message: "Internal server error", error: error.message });
   }
 };
 
@@ -293,27 +296,28 @@ export const markLectureWatched = async (req, res) => {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
-    const { subjectId, semesterId, videoId, totalNotes, totalLectures } =
+    const { subjectId, classId, videoId, totalNotes, totalLectures } =
       req.body;
 
-    if (!subjectId || !semesterId || !videoId) {
+    if (!subjectId || !classId || !videoId) {
       return res.status(400).json({
-        message: "subjectId, semesterId and videoId are required",
+        message: "subjectId, classId and videoId are required",
       });
     }
 
     const subjectIdNum = parseInt(subjectId, 10);
-    const semesterIdNum = parseInt(semesterId, 10);
+    const classIdNum = parseInt(classId, 10);
+    const videoIdStr = String(videoId);
 
     let progress = await Progress.findOne({
       studentId: userId,
       subjectId: subjectIdNum,
-      semesterId: semesterIdNum,
+      classId: classIdNum,
     });
 
     // Create if not exists
     if (!progress) {
-      const videosCompleted = [videoId];
+      const videosCompleted = [videoIdStr];
       const notesCompleted = [];
 
       const completion = computeCompletion({
@@ -326,7 +330,7 @@ export const markLectureWatched = async (req, res) => {
       progress = await Progress.create({
         studentId: userId,
         subjectId: subjectIdNum,
-        semesterId: semesterIdNum,
+        classId: classIdNum,
         lecturesWatched: 1,
         notesRead: 0,
         notesCompleted,
@@ -343,7 +347,7 @@ export const markLectureWatched = async (req, res) => {
     // If already marked, do nothing
     if (
       Array.isArray(progress.videosCompleted) &&
-      progress.videosCompleted.includes(videoId)
+      progress.videosCompleted.includes(videoIdStr)
     ) {
       return res
         .status(200)
@@ -351,7 +355,7 @@ export const markLectureWatched = async (req, res) => {
     }
 
     // Mark as watched
-    progress.videosCompleted.push(videoId);
+    progress.videosCompleted.push(videoIdStr);
     progress.lecturesWatched = (progress.lecturesWatched || 0) + 1;
 
     const completion = computeCompletion({
@@ -371,7 +375,7 @@ export const markLectureWatched = async (req, res) => {
     progress.videosCompleted = [...progress.videosCompleted];
 
     await progress.save();
-    console.log("Lecture marked as watched and saved:", { videoId, videosCompleted: progress.videosCompleted });
+    console.log("Lecture marked as watched and saved:", { videoId: videoIdStr, videosCompleted: progress.videosCompleted });
 
     return res
       .status(200)

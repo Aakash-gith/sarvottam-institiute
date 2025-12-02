@@ -8,11 +8,11 @@ const progressSchema = new mongoose.Schema(
       required: true,
     },
 
-    semesterId: {
+    classId: {
       type: Number,
       required: true,
       min: 1,
-      max: 8,
+      max: 12,
     },
 
     subjectId: {
@@ -33,12 +33,12 @@ const progressSchema = new mongoose.Schema(
     },
 
     notesCompleted: {
-      type: [String],       
+      type: [String],
       default: [],
     },
 
     videosCompleted: {
-      type: [String],      
+      type: [String],
       default: [],
     },
 
@@ -59,7 +59,7 @@ const progressSchema = new mongoose.Schema(
 
 // Prevent duplicate records for the same subject + semester + user
 progressSchema.index(
-  { studentId: 1, semesterId: 1, subjectId: 1 },
+  { studentId: 1, classId: 1, subjectId: 1 },
   { unique: true }
 );
 

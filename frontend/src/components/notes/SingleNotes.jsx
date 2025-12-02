@@ -63,7 +63,7 @@ function SingleNotes() {
         }
 
         const progressResp = await API.get(
-          `/progress/getSubjectProgress?semesterId=${currentClass}`
+          `/progress/getSubjectProgress?classId=${currentClass}`
         );
 
         const subjectProg = Array.isArray(progressResp.data)
@@ -144,7 +144,7 @@ function SingleNotes() {
   const reloadProgress = async () => {
     try {
       const progressResp = await API.get(
-        `/progress/getSubjectProgress?semesterId=${currentClass}`
+        `/progress/getSubjectProgress?classId=${currentClass}`
       );
 
       const subjectProg = Array.isArray(progressResp.data)
@@ -167,7 +167,7 @@ function SingleNotes() {
   const handleMarkNote = async (noteId) => {
     console.log("handleMarkNote called with noteId:", noteId);
 
-    if (trackedItems.notes.includes(noteId)) {
+    if (trackedItems.notes.some(id => String(id) === String(noteId))) {
       console.log("Note already tracked, skipping");
       return;
     }
@@ -182,7 +182,7 @@ function SingleNotes() {
       console.log("Calling markNoteRead API...");
       const resp = await markNoteRead({
         subjectId: parseInt(subjectId, 10),
-        semesterId: currentClass,
+        classId: currentClass,
         noteId,
         totalNotes: content.notes.length,
         totalLectures: content.videos.length,
@@ -212,7 +212,7 @@ function SingleNotes() {
 
   // Mark video handler
   const handleMarkVideo = async (videoId) => {
-    if (trackedItems.videos.includes(videoId)) return;
+    if (trackedItems.videos.some(id => String(id) === String(videoId))) return;
     if (pendingMarks.videos && pendingMarks.videos[videoId]) return;
 
     setPendingMarks((p) => ({ ...p, videos: { ...(p.videos || {}), [videoId]: true } }));
@@ -220,7 +220,7 @@ function SingleNotes() {
     try {
       const resp = await markLectureWatched({
         subjectId: parseInt(subjectId, 10),
-        semesterId: currentClass,
+        classId: currentClass,
         videoId,
         totalNotes: content.notes.length,
         totalLectures: content.videos.length,
@@ -352,7 +352,7 @@ function SingleNotes() {
                   const localFile = note.file; // For local PDFs
                   const driveUrl = driveId ? `https://drive.google.com/file/d/${driveId}/view` : null;
                   const pdfUrl = localFile || driveUrl;
-                  const isDone = trackedItems.notes.includes(noteId);
+                  const isDone = trackedItems.notes.some(id => String(id) === String(noteId));
                   const isPending = pendingMarks.notes && pendingMarks.notes[noteId];
 
                   return (
@@ -417,7 +417,7 @@ function SingleNotes() {
               {content.videos.length > 0 ? (
                 content.videos.map((video, index) => {
                   const videoId = getYouTubeId(video.youtubeUrl);
-                  const isDone = trackedItems.videos.includes(video._id);
+                  const isDone = trackedItems.videos.some(id => String(id) === String(video._id));
                   const isPending = pendingMarks.videos && pendingMarks.videos[video._id];
 
                   return (
@@ -427,55 +427,45 @@ function SingleNotes() {
                         }`}
                     >
                       <div className="flex items-start justify-between gap-4 mb-4">
-                        <div className="flex items-start gap-4">
-                          <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${isDone
-                            ? "bg-green-100 text-green-600"
-                            : "bg-red-100 text-red-500"
+                        <div className="flex items-center gap-3">
+                          <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${isDone ? "bg-green-100 text-green-600" : "bg-red-100 text-red-600"
                             }`}>
-                            {isDone ? <CheckCircle size={24} /> : <Play size={24} />}
+                            {isDone ? <CheckCircle size={20} /> : <Play size={20} />}
                           </div>
                           <div>
-                            <div className="flex items-center gap-2">
-                              <span className="text-xs font-medium text-gray-400">#{index + 1}</span>
-                              <h3 className="text-gray-900 font-bold text-lg">{video.title}</h3>
-                            </div>
-                            {video.duration && (
-                              <p className="text-xs text-gray-500 mt-1">Duration: {video.duration}</p>
-                            )}
-                            {video.description && (
-                              <p className="text-sm text-gray-600 mt-2">{video.description}</p>
-                            )}
+                            <h3 className="font-semibold text-gray-900 line-clamp-1">{video.title}</h3>
+                            <p className="text-xs text-gray-500">Video Lecture</p>
                           </div>
                         </div>
-
                         <button
-                          onClick={() => handleMarkVideo(video._id)}
+                          onClick={() => handleMarkVideo(videoId)}
                           disabled={isDone || isPending}
-                          className={`px-5 py-2.5 rounded-lg font-medium transition-all duration-300 shrink-0 ${isDone
+                          className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${isDone
                             ? "bg-green-100 text-green-700 cursor-default"
                             : isPending
-                              ? "bg-red-400 text-white cursor-wait"
-                              : "bg-red-500 text-white hover:bg-red-600 hover:shadow-md cursor-pointer"
+                              ? "bg-blue-100 text-blue-600"
+                              : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                             }`}
                         >
-                          {isDone ? "✓ Watched" : isPending ? "Marking..." : "Mark as Watched"}
+                          {isDone ? "Watched" : isPending ? "..." : "Mark Watched"}
                         </button>
                       </div>
 
-                      {videoId && (
-                        <div className="mt-4 rounded-xl overflow-hidden border border-gray-200 shadow-sm">
+                      <div className="relative pt-[56.25%] rounded-lg overflow-hidden bg-gray-100 group">
+                        {videoId ? (
                           <iframe
-                            width="100%"
-                            height="400"
+                            className="absolute inset-0 w-full h-full"
                             src={`https://www.youtube.com/embed/${videoId}`}
                             title={video.title}
-                            frameBorder="0"
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                             allowFullScreen
-                            className="bg-gray-100"
                           ></iframe>
-                        </div>
-                      )}
+                        ) : (
+                          <div className="absolute inset-0 flex items-center justify-center text-gray-400">
+                            <p>Video unavailable</p>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   );
                 })
@@ -483,7 +473,7 @@ function SingleNotes() {
                 <div className="text-center py-16 bg-white rounded-xl border border-gray-200">
                   <div className="text-6xl mb-4">🎬</div>
                   <p className="text-gray-600 font-medium">No videos available yet</p>
-                  <p className="text-gray-400 text-sm mt-1">Video lectures will appear here once uploaded</p>
+                  <p className="text-gray-400 text-sm mt-1">Video lectures will appear here</p>
                 </div>
               )}
             </>

@@ -168,16 +168,16 @@ export const resendOtp = async (req, res) => {
       });
       await redis.setex(`otp:${email}`, 300, otp); // 5 min expiry
       await sendOtpEmail(email, otp);
-      
-      return res.status(200).json({ 
-        success: true, 
-        message: "OTP sent to email" 
+
+      return res.status(200).json({
+        success: true,
+        message: "OTP sent to email"
       });
     } catch (err) {
       console.error("Failed to generate and send OTP:", err);
-      return res.status(500).json({ 
-        success: false, 
-        message: "Failed to send OTP" 
+      return res.status(500).json({
+        success: false,
+        message: "Failed to send OTP"
       });
     }
   } catch (err) {
