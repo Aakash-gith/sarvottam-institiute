@@ -34,4 +34,11 @@
     "globals": "^16.4.0",
     "vite": "^7.1.7"
   }
+},
+"overrides": {
+  "react-helmet-async": {
+    "react": "$react",
+    "react-dom": "$react-dom"
+  }
+}
 }
