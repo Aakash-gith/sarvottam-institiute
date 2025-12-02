@@ -12,19 +12,18 @@
 body {
   font-family: "Poppins", sans-serif;
   color: #1f2937;
-  overflow: hidden;
-  height: 100vh;
+  min-height: 100vh;
   background-color: #f5f7fa;
+  overflow-y: auto;
 }
 
 html {
-  overflow: hidden;
-  height: 100vh;
+  min-height: 100vh;
+  overflow-y: auto;
 }
 
 #root {
-  height: 100vh;
-  overflow: hidden;
+  min-height: 100vh;
 }
 
 .font-poppins {

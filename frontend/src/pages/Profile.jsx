@@ -304,15 +304,15 @@ function Profile() {
   }
 
   return (
-    <div className="flex h-screen bg-gray-50 overflow-hidden">
+    <div className="flex min-h-screen bg-gray-50">
       <Navbar />
-      <div className="flex-1 flex flex-col h-screen overflow-hidden">
+      <div className="flex-1 flex flex-col min-h-screen">
         <HeaderBar />
 
         <div className="flex-1 overflow-y-auto p-6">
           <div className="max-w-6xl mx-auto">
             {/* Profile Header - Clean Modern Design */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-6">
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 mb-6 overflow-visible">
               {/* Gradient Banner */}
               <div className="h-32 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 relative">
                 <div className="absolute inset-0 opacity-30 bg-white/5"></div>
