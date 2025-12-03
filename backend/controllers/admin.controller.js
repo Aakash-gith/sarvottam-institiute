@@ -1,8 +1,10 @@
 import AdminRequest from "../models/AdminRequest.js";
 import AdminUser from "../models/AdminUser.js";
 import User from "../models/Users.js";
+import PasswordReset from "../models/PasswordReset.js";
 import nodemailer from "nodemailer";
 import jwt from "jsonwebtoken";
+import bcryptjs from "bcryptjs";
 
 const MASTER_ADMIN_EMAIL = "arsir.personal@gmail.com";
 
@@ -416,6 +418,190 @@ export const adminLogin = async (req, res) => {
         res.status(500).json({
             success: false,
             message: "Error during admin login",
+        });
+    }
+};
+
+// Forgot password - Send OTP
+export const forgotPasswordSendOTP = async (req, res) => {
+    try {
+        const { email } = req.body;
+
+        if (!email) {
+            return res.status(400).json({
+                success: false,
+                message: "Email is required",
+            });
+        }
+
+        // Check if admin exists
+        const adminUser = await AdminUser.findOne({ email, isActive: true });
+        if (!adminUser) {
+            return res.status(404).json({
+                success: false,
+                message: "Admin user not found",
+            });
+        }
+
+        // Generate 6-digit OTP
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+        // Save OTP to database
+        await PasswordReset.deleteMany({ email }); // Delete previous OTPs
+        await PasswordReset.create({
+            email,
+            otp,
+            otpExpires: new Date(Date.now() + 10 * 60 * 1000), // 10 minutes
+        });
+
+        // Send OTP via email
+        await sendEmail(
+            email,
+            "Admin Password Reset OTP",
+            `
+            <div style="font-family: Arial, sans-serif; padding: 20px;">
+                <h2>Password Reset Request</h2>
+                <p>Your OTP for password reset is:</p>
+                <div style="background: #f0f0f0; padding: 10px; border-radius: 5px; text-align: center; margin: 20px 0;">
+                    <h1 style="letter-spacing: 5px; color: #2563eb;">${otp}</h1>
+                </div>
+                <p>This OTP will expire in 10 minutes.</p>
+                <p style="color: #666; font-size: 12px;">If you didn't request a password reset, please ignore this email.</p>
+            </div>
+            `
+        );
+
+        // For development: log OTP to console
+        if (process.env.NODE_ENV !== "production") {
+            console.log(`✓ OTP for ${email}: ${otp}`);
+        }
+
+        res.json({
+            success: true,
+            message: "OTP sent to your email",
+            data: {
+                email,
+                // In development, return OTP for testing
+                otp: process.env.NODE_ENV !== "production" ? otp : undefined,
+            },
+        });
+    } catch (error) {
+        console.error("Forgot password error:", error);
+        res.status(500).json({
+            success: false,
+            message: "Error sending OTP",
+        });
+    }
+};
+
+// Verify OTP and reset password
+export const verifyOTPAndResetPassword = async (req, res) => {
+    try {
+        const { email, otp, newPassword } = req.body;
+
+        if (!email || !otp || !newPassword) {
+            return res.status(400).json({
+                success: false,
+                message: "Email, OTP, and new password are required",
+            });
+        }
+
+        if (newPassword.length < 6) {
+            return res.status(400).json({
+                success: false,
+                message: "Password must be at least 6 characters long",
+            });
+        }
+
+        // Check if admin exists
+        const adminUser = await AdminUser.findOne({ email, isActive: true });
+        if (!adminUser) {
+            return res.status(404).json({
+                success: false,
+                message: "Admin user not found",
+            });
+        }
+
+        // Check OTP
+        const passwordReset = await PasswordReset.findOne({
+            email,
+            otp,
+            isUsed: false,
+        });
+
+        if (!passwordReset) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid OTP",
+            });
+        }
+
+        // Check if OTP expired
+        if (new Date() > passwordReset.otpExpires) {
+            return res.status(400).json({
+                success: false,
+                message: "OTP has expired",
+            });
+        }
+
+        // Check attempts
+        if (passwordReset.attempts >= 5) {
+            return res.status(400).json({
+                success: false,
+                message: "Too many failed attempts. Please request a new OTP",
+            });
+        }
+
+        // Update password
+        const user = await User.findById(adminUser.userId);
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found",
+            });
+        }
+
+        // Hash new password
+        const hashedPassword = await bcryptjs.hash(newPassword, 10);
+        user.password = hashedPassword;
+        await user.save();
+
+        // Mark OTP as used
+        passwordReset.isUsed = true;
+        await passwordReset.save();
+
+        // Send confirmation email
+        await sendEmail(
+            email,
+            "Password Reset Successful",
+            `
+            <div style="font-family: Arial, sans-serif; padding: 20px;">
+                <h2>Password Reset Successful</h2>
+                <p>Your password has been successfully reset.</p>
+                <p>You can now login with your new password.</p>
+                <p style="color: #666; font-size: 12px;">If you didn't request this change, please contact the master admin immediately.</p>
+            </div>
+            `
+        );
+
+        res.json({
+            success: true,
+            message: "Password reset successfully",
+        });
+    } catch (error) {
+        console.error("Reset password error:", error);
+
+        // Increment attempts on invalid OTP
+        if (error.message === "Invalid OTP") {
+            await PasswordReset.updateOne(
+                { email: req.body.email, otp: req.body.otp },
+                { $inc: { attempts: 1 } }
+            );
+        }
+
+        res.status(500).json({
+            success: false,
+            message: "Error resetting password",
         });
     }
 };

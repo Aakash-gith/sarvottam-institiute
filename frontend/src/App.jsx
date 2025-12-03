@@ -20,6 +20,7 @@ import {
   adminLogin,
   adminSignup,
   adminRequestStatus,
+  adminForgotPassword,
   adminDashboard,
 } from "./Routes/Routes";
 
@@ -37,6 +38,7 @@ const Profile = React.lazy(() => import("./pages/Profile"));
 const AdminLogin = React.lazy(() => import("./pages/Admin/AdminLogin"));
 const AdminSignup = React.lazy(() => import("./pages/Admin/AdminSignup"));
 const AdminRequestStatus = React.lazy(() => import("./pages/Admin/AdminRequestStatus"));
+const AdminForgotPassword = React.lazy(() => import("./pages/Admin/AdminForgotPassword"));
 const AdminDashboard = React.lazy(() => import("./pages/Admin/AdminDashboard"));
 const CreateQuiz = React.lazy(() => import("./components/quiz/CreateQuiz"));
 const TakeQuiz = React.lazy(() => import("./components/quiz/TakeQuiz"));
@@ -65,6 +67,7 @@ function App() {
           <Route path={adminLogin} element={<AdminLogin />} />
           <Route path={adminSignup} element={<AdminSignup />} />
           <Route path={adminRequestStatus} element={<AdminRequestStatus />} />
+          <Route path={adminForgotPassword} element={<AdminForgotPassword />} />
           <Route path={adminDashboard} element={<AdminDashboard />} />
 
           {/* Protected Routes - Only accessible when logged in */}

@@ -18,4 +18,5 @@ export const profile = "/profile";
 export const adminLogin = "/admin/login";
 export const adminSignup = "/admin/signup";
 export const adminRequestStatus = "/admin/request-status";
+export const adminForgotPassword = "/admin/forgot-password";
 export const adminDashboard = "/admin/dashboard";

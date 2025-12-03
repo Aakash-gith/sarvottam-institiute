@@ -7,6 +7,8 @@ import {
     rejectAdminRequest,
     getAdminInfo,
     adminLogin,
+    forgotPasswordSendOTP,
+    verifyOTPAndResetPassword,
 } from "../controllers/admin.controller.js";
 import authMiddleware from "../middleware/auth.middleware.js";
 import { adminMiddleware, masterAdminMiddleware } from "../middleware/admin.middleware.js";
@@ -17,6 +19,8 @@ const router = Router();
 router.post("/request-access", requestAdminAccess);
 router.get("/request-status", getAdminRequestStatus);
 router.post("/login", adminLogin);
+router.post("/forgot-password/send-otp", forgotPasswordSendOTP);
+router.post("/forgot-password/verify-otp", verifyOTPAndResetPassword);
 
 // Protected routes
 router.get("/info", authMiddleware, adminMiddleware, getAdminInfo);

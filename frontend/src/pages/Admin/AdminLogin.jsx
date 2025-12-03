@@ -84,6 +84,14 @@ function AdminLogin() {
                         {loading ? "Logging in..." : "Login to Admin Panel"}
                         {!loading && <ArrowRight size={20} />}
                     </button>
+
+                    <button
+                        type="button"
+                        onClick={() => navigate("/admin/forgot-password")}
+                        className="w-full text-center text-sm text-blue-600 hover:text-blue-700 font-medium py-2"
+                    >
+                        Forgot Password?
+                    </button>
                 </form>
 
                 {/* Divider */}
