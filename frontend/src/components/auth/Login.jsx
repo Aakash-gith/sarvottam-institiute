@@ -193,6 +193,20 @@ export default function Login() {
               Sign up
             </button>
           </div>
+
+          {/* Admin Login Link */}
+          <div className="mt-6 pt-6 border-t border-gray-300">
+            <p className="text-gray-600 text-sm text-center mb-3">
+              Are you an admin?
+            </p>
+            <button
+              type="button"
+              onClick={() => navigate("/admin/login")}
+              className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold py-3 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg"
+            >
+              Admin Login
+            </button>
+          </div>
         </div>
       </div>
 

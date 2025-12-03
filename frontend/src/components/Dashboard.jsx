@@ -1,7 +1,7 @@
 import React from "react";
 import { classData } from "../classData";
 import { Link } from "react-router-dom";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, BookOpen, Brain, FileText } from "lucide-react";
 
 function Dashboard() {
   const userData = JSON.parse(localStorage.getItem("user") || "{}");
@@ -9,8 +9,35 @@ function Dashboard() {
 
   const subjects = classData[currentClass]?.subjects || [];
 
+  const quickLinks = [
+    { name: "Study Notes", path: "/notes", icon: BookOpen, color: "bg-blue-50 text-blue-600" },
+    { name: "Practice Quiz", path: "/quiz", icon: Brain, color: "bg-purple-50 text-purple-600" },
+    { name: "PYQ Papers", path: "/pyq", icon: FileText, color: "bg-orange-50 text-orange-600" },
+  ];
+
   return (
     <div className="w-full">
+      {/* Quick Links */}
+      <div className="mb-12">
+        <h2 className="text-xl font-bold text-gray-900 mb-4">Quick Access</h2>
+        <div className="grid gap-4 grid-cols-1 sm:grid-cols-3">
+          {quickLinks.map((link) => {
+            const Icon = link.icon;
+            return (
+              <Link
+                to={link.path}
+                key={link.name}
+                className={`${link.color} rounded-lg p-6 hover:shadow-md transition cursor-pointer`}
+              >
+                <Icon size={24} className="mb-2" />
+                <h3 className="font-semibold text-sm">{link.name}</h3>
+              </Link>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Your Subjects */}
       <div className="mb-8">
         <h2 className="text-2xl font-bold text-gray-900">Your Subjects</h2>
         <p className="text-gray-600 text-sm">Continue learning and master your concepts</p>

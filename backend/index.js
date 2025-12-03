@@ -7,6 +7,7 @@ import eventRoutes from "./routes/event.routes.js";
 import taskRoutes from "./routes/task.routes.js";
 import quizRoutes from "./routes/quiz.routes.js";
 import userRoutes from "./routes/user.routes.js";
+import adminRoutes from "./routes/admin.routes.js";
 import cookieParser from "cookie-parser";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -14,6 +15,7 @@ import fs from "fs";
 import authMiddleware from "./middleware/auth.middleware.js";
 import progressRoutes from "./routes/progress.routes.js";
 import subjectNotesRoutes from "./routes/subjectsNotes.routes.js";
+import pyqRoutes from "./routes/pyq.routes.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -74,15 +76,18 @@ app.get("/", (req, res) => {
 
 // reset API Routes reset
 app.use("/api/auth", authRoutes);
+app.use("/api/admin", adminRoutes);
 app.use("/api/event", authMiddleware, eventRoutes);
 app.use("/api/task", authMiddleware, taskRoutes);
 app.use("/api/quiz", authMiddleware, quizRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/progress", authMiddleware, progressRoutes);
 app.use("/api/subjectNotes", subjectNotesRoutes); //TODO add admin and auth middleware
+app.use("/api/pyq", pyqRoutes);
 
 const frontendPath = path.join(__dirname, "../frontend/dist");
 app.use(express.static(frontendPath));
+app.use("/grade10", express.static(path.join(__dirname, "../grade10")));
 
 // app.get(/.*/, (req, res) => {
 //   res.sendFile(path.join(frontendPath, "index.html"));

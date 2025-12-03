@@ -10,12 +10,17 @@ import {
   events,
   notes,
   subjectNotes,
+  pyq,
   quiz,
   quizCreate,
   quizTake,
   quizResults,
   quizHistory,
   profile,
+  adminLogin,
+  adminSignup,
+  adminRequestStatus,
+  adminDashboard,
 } from "./Routes/Routes";
 
 import conf from "./conf/conf";
@@ -26,8 +31,13 @@ const Auth = React.lazy(() => import("./pages/Auth"));
 const Events = React.lazy(() => import("./pages/Events"));
 const Notes = React.lazy(() => import("./pages/Notes"));
 const SubjectNotes = React.lazy(() => import("./pages/SubjectNotes"));
+const PYQ = React.lazy(() => import("./pages/PYQ"));
 const Quiz = React.lazy(() => import("./pages/Quiz"));
 const Profile = React.lazy(() => import("./pages/Profile"));
+const AdminLogin = React.lazy(() => import("./pages/Admin/AdminLogin"));
+const AdminSignup = React.lazy(() => import("./pages/Admin/AdminSignup"));
+const AdminRequestStatus = React.lazy(() => import("./pages/Admin/AdminRequestStatus"));
+const AdminDashboard = React.lazy(() => import("./pages/Admin/AdminDashboard"));
 const CreateQuiz = React.lazy(() => import("./components/quiz/CreateQuiz"));
 const TakeQuiz = React.lazy(() => import("./components/quiz/TakeQuiz"));
 const QuizResults = React.lazy(() => import("./components/quiz/QuizResults"));
@@ -51,10 +61,17 @@ function App() {
           <Route path={forgotPass} element={<Auth />} />
           <Route path={signUp} element={<Auth />} />
 
+          {/* Admin Routes */}
+          <Route path={adminLogin} element={<AdminLogin />} />
+          <Route path={adminSignup} element={<AdminSignup />} />
+          <Route path={adminRequestStatus} element={<AdminRequestStatus />} />
+          <Route path={adminDashboard} element={<AdminDashboard />} />
+
           {/* Protected Routes - Only accessible when logged in */}
           <Route path={events} element={<ProtectedRoute><Events /></ProtectedRoute>} />
           <Route path={notes} element={<ProtectedRoute><Notes /></ProtectedRoute>} />
           <Route path={subjectNotes} element={<ProtectedRoute><SubjectNotes /></ProtectedRoute>} />
+          <Route path={pyq} element={<ProtectedRoute><PYQ /></ProtectedRoute>} />
           <Route path={quiz} element={<ProtectedRoute><Quiz /></ProtectedRoute>} />
           <Route path={quizCreate} element={<ProtectedRoute><CreateQuiz /></ProtectedRoute>} />
           <Route path={quizTake} element={<ProtectedRoute><TakeQuiz /></ProtectedRoute>} />

@@ -1,5 +1,5 @@
 import React from "react";
-import { Navbar, Progress, Subjects } from "../components/index.components";
+import { Navbar, Progress, Subjects, PyqSection } from "../components/index.components";
 
 function Notes() {
   return (
@@ -11,6 +11,7 @@ function Notes() {
         <div className="p-6 md:p-10 max-w-7xl mx-auto flex flex-col gap-6">
           <Progress />
           <Subjects />
+          <PyqSection />
         </div>
       </div>
     </div>

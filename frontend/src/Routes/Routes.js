@@ -6,9 +6,16 @@ export const forgotPass = "/auth/forgot-pass";
 export const events = "/events";
 export const notes = "/notes";
 export const subjectNotes = "/notes/:subjectId";
+export const pyq = "/pyq";
 export const quiz = "/quiz";
 export const quizCreate = "/quiz/create";
 export const quizTake = "/quiz/attempt/:attemptId";
 export const quizResults = "/quiz/results/:attemptId";
 export const quizHistory = "/quiz/history";
 export const profile = "/profile";
+
+// Admin routes
+export const adminLogin = "/admin/login";
+export const adminSignup = "/admin/signup";
+export const adminRequestStatus = "/admin/request-status";
+export const adminDashboard = "/admin/dashboard";

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Home, BookOpen, Brain, Calendar, Menu, X, User, LogOut } from "lucide-react";
+import { Home, BookOpen, Brain, Calendar, Menu, X, User, LogOut, FileText } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../store/authSlice";
@@ -48,6 +48,7 @@ function Navbar() {
   const navItems = [
     { name: "Home", path: "/", icon: Home },
     { name: "Learning", path: "/notes", icon: BookOpen },
+    { name: "PYQ", path: "/pyq", icon: FileText },
     { name: "Quiz", path: "/quiz", icon: Brain },
     { name: "Events", path: "/events", icon: Calendar },
     { name: "Profile", path: "/profile", icon: User, isProfile: true },

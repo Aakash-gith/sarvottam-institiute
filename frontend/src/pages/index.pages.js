@@ -5,5 +5,6 @@ import Maps from "./Maps";
 import News from "./News";
 import Notes from "./Notes";
 import SubjectNotes from "./SubjectNotes";
+import PYQ from "./PYQ";
 import Quiz from "./Quiz";
-export { Auth, Home, Events, Maps, News, Notes, SubjectNotes, Quiz };
+export { Auth, Home, Events, Maps, News, Notes, SubjectNotes, PYQ, Quiz };

@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Grade 9 - Sarvottam Institute</title>
   <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
   <header>
     <div class="navbar">
@@ -15,6 +17,7 @@
           <li><a href="../index.html">Home</a></li>
           <li><a href="../grade10/grade10.html">Grade 10</a></li>
           <li><a href="#Subjects">Subjects</a></li>
+          <li><a href="#pyqs">PYQs</a></li>
         </ul>
       </nav>
     </div>
@@ -25,18 +28,18 @@
     <p>Access detailed resources for Mathematics and Science, including videos, notes, and important content.</p>
   </section>
 
-  <section class="subjects">
+  <section class="subjects" id="Subjects">
     <h2>Subjects for Grade 10</h2>
     <div class="subject-grid">
       <div class="card">
-        <img src="/grade9/images/maths-icon.png" alt="Math Icon" class="subject-icon"/>
+        <img src="/grade9/images/maths-icon.png" alt="Math Icon" class="subject-icon" />
         <a href="/grade10/maths.html">
           <h3>Mathematics</h3>
           <small>Algebra, Geometry, Statistics, and more</small>
         </a>
       </div>
       <div class="card">
-        <img src="/grade9/images/science-icon.png" alt="Science Icon" class="subject-icon"/>
+        <img src="/grade9/images/science-icon.png" alt="Science Icon" class="subject-icon" />
         <a href="/grade9/science.html">
           <h3>Science</h3>
           <small>Physics, Chemistry, Biology, and more</small>
@@ -44,5 +47,88 @@
       </div>
     </div>
   </section>
+
+  <section class="pyqs" id="pyqs">
+    <div class="pyq-header">
+      <h2>PYQs (Previous Year Questions)</h2>
+      <p>Direct access to the latest Maths and Science question papers in downloadable PDF format.</p>
+    </div>
+    <div class="pyq-grid">
+      <article class="pyq-card" data-subject="Maths">
+        <header>
+          <h3>Mathematics</h3>
+          <p class="pyq-meta">Standard, Basic & language variants</p>
+        </header>
+        <div class="pyq-scroll">
+          <ul class="pyq-list" id="pyq-maths"></ul>
+        </div>
+      </article>
+      <article class="pyq-card" data-subject="Science">
+        <header>
+          <h3>Science</h3>
+          <p class="pyq-meta">Physics, Chemistry & Biology</p>
+        </header>
+        <div class="pyq-scroll">
+          <ul class="pyq-list" id="pyq-science"></ul>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <script>
+    (function loadPyqs() {
+      const targets = {
+        Maths: document.getElementById('pyq-maths'),
+        Science: document.getElementById('pyq-science')
+      };
+
+      const renderFallback = (target, message) => {
+        target.innerHTML = '';
+        const li = document.createElement('li');
+        li.className = 'pyq-empty';
+        li.textContent = message;
+        target.appendChild(li);
+      };
+
+      fetch('PYQ/pyq-list.json')
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error('Failed to fetch PYQs');
+          }
+          return response.json();
+        })
+        .then((data) => {
+          Object.keys(targets).forEach((subject) => {
+            const target = targets[subject];
+            const files = data[subject] || [];
+
+            if (!files.length) {
+              renderFallback(target, 'Question papers will be uploaded soon.');
+              return;
+            }
+
+            const fragment = document.createDocumentFragment();
+            files.forEach((file) => {
+              const li = document.createElement('li');
+              const link = document.createElement('a');
+              link.href = file.file;
+              link.textContent = file.label;
+              link.target = '_blank';
+              link.rel = 'noopener';
+              li.appendChild(link);
+              fragment.appendChild(li);
+            });
+            target.appendChild(fragment);
+          });
+        })
+        .catch((error) => {
+          console.error('Unable to load PYQ list', error);
+          Object.values(targets).forEach((target) => {
+            renderFallback(target, 'Unable to load PYQ list right now.');
+          });
+        });
+    })();
+  </script>
 </body>
+
 </html>
