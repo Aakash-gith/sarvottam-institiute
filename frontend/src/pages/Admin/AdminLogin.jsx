@@ -19,7 +19,7 @@ function AdminLogin() {
             if (response.data.success) {
                 const { token, role } = response.data.data;
                 localStorage.setItem("adminEmail", email);
-                localStorage.setItem("token", token);
+                localStorage.setItem("accessToken", token);  // Store as accessToken for auth middleware
                 localStorage.setItem("adminRole", role);
                 navigate("/admin/dashboard");
                 toast.success("Welcome to Admin Panel!");

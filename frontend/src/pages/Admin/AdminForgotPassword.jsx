@@ -12,7 +12,6 @@ function AdminForgotPassword() {
     const [confirmPassword, setConfirmPassword] = useState("");
     const [loading, setLoading] = useState(false);
     const [timeLeft, setTimeLeft] = useState(0);
-    const [developmentOTP, setDevelopmentOTP] = useState(""); // For dev testing
     const navigate = useNavigate();
 
     // Timer for OTP expiry
@@ -34,13 +33,6 @@ function AdminForgotPassword() {
             const response = await API.post("/admin/forgot-password/send-otp", { email });
             if (response.data.success) {
                 toast.success("OTP sent to your email");
-                // Show dev OTP if available
-                if (response.data.data.otp) {
-                    setDevelopmentOTP(response.data.data.otp);
-                    toast.success(`Dev OTP: ${response.data.data.otp}`, {
-                        duration: 10000,
-                    });
-                }
                 setStep(2);
                 setTimeLeft(600); // 10 minutes
             }
@@ -177,18 +169,6 @@ function AdminForgotPassword() {
                                 )}
                             </p>
                         </div>
-
-                        {/* Development OTP Display */}
-                        {developmentOTP && (
-                            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                                <p className="text-sm text-yellow-700">
-                                    <span className="font-semibold">Dev OTP:</span> {developmentOTP}
-                                </p>
-                                <p className="text-xs text-yellow-600 mt-1">
-                                    (Only visible in development mode for testing)
-                                </p>
-                            </div>
-                        )}
 
                         <button
                             type="submit"

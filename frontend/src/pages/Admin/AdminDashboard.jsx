@@ -32,7 +32,7 @@ function AdminDashboard() {
 
     const fetchAdminInfo = async () => {
         try {
-            const token = localStorage.getItem("token");
+            const token = localStorage.getItem("accessToken");
             if (!token) {
                 navigate("/admin/login");
                 return;
@@ -44,14 +44,14 @@ function AdminDashboard() {
         } catch (error) {
             console.error(error);
             toast.error("Error loading admin info");
-            localStorage.removeItem("token");
+            localStorage.removeItem("accessToken");
             localStorage.removeItem("adminEmail");
             navigate("/admin/login");
         }
     };
 
     const handleLogout = () => {
-        localStorage.removeItem("token");
+        localStorage.removeItem("accessToken");
         localStorage.removeItem("adminRole");
         localStorage.removeItem("adminEmail");
         navigate("/admin/login");
