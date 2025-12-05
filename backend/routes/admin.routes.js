@@ -6,7 +6,7 @@ import {
     approveAdminRequest,
     rejectAdminRequest,
     getAdminInfo,
-    adminLogin,
+    adminLoginNew,
     sendLoginOTP,
     verifyLoginOTP,
     forgotPasswordSendOTP,
@@ -20,7 +20,7 @@ const router = Router();
 // Public routes
 router.post("/request-access", requestAdminAccess);
 router.get("/request-status", getAdminRequestStatus);
-router.post("/login", adminLogin);
+router.post("/login", adminLoginNew);
 router.post("/login/send-otp", sendLoginOTP);
 router.post("/login/verify-otp", verifyLoginOTP);
 router.post("/forgot-password/send-otp", forgotPasswordSendOTP);

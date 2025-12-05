@@ -12,6 +12,8 @@ import Progress from "./notes/Progress";
 import Subjects from "./notes/Subjects";
 import SingleNotes from "./notes/SingleNotes";
 import PyqSection from "./notes/PyqSection";
+import PhysicsChapters from "./notes/PhysicsChapters";
+import NotesViewer from "./notes/NotesViewer";
 export {
   Signup,
   Login,
@@ -27,4 +29,6 @@ export {
   Subjects,
   SingleNotes,
   PyqSection,
+  PhysicsChapters,
+  NotesViewer,
 };

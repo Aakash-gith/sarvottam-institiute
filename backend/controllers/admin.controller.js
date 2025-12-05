@@ -366,7 +366,8 @@ export const getAdminInfo = async (req, res) => {
 
 
 // Admin login (verify email has admin access)
-export const adminLogin = async (req, res) => {
+export const adminLoginNew = async (req, res) => {
+    console.log("HITTING NEW ADMIN LOGIN LOGIC");
     try {
         const { email, password } = req.body;
 
@@ -433,8 +434,25 @@ export const adminLogin = async (req, res) => {
             });
         }
 
-        // REMOVED OTP GENERATION HERE TO AVOID DOUBLE SEND
-        // Frontend will call sendLoginOTP
+        // Generate OTP
+        const otp = otpGenerator.generate(6, {
+            digits: true,
+            lowerCaseAlphabets: false,
+            upperCaseAlphabets: false,
+            specialChars: false,
+        });
+
+        // Store OTP in Redis (5 minutes expiry)
+        await redis.setex(`admin_otp:${email}`, 300, otp);
+
+        // Send OTP Email
+        const html = otpEmailTemplate(otp);
+        const mailOptions = createMailOptions(
+            email,
+            "Admin Login Verification - Sarvottam Institute",
+            html
+        );
+        await transporter.sendMail(mailOptions);
 
         // For ALL admins, require OTP verification
         return res.json({
@@ -543,19 +561,7 @@ export const verifyLoginOTP = async (req, res) => {
         // Verify OTP from Redis
         const storedOtp = await redis.get(`admin_otp:${email}`);
 
-        console.log("DEBUG: verifyLoginOTP");
-        console.log(`DEBUG: Received OTP: '${otp}' (Type: ${typeof otp}, Length: ${otp?.length})`);
-        console.log(`DEBUG: Stored OTP: '${storedOtp}' (Type: ${typeof storedOtp}, Length: ${storedOtp?.length})`);
-
-        // Normalize values for comparison
-        const normalizedInputOtp = String(otp).trim();
-        const normalizedStoredOtp = String(storedOtp).trim();
-
-        if (!normalizedStoredOtp || normalizedStoredOtp !== normalizedInputOtp) {
-            console.log("DEBUG: OTP verification failed after normalization");
-            console.log(`DEBUG: Normalized Input: '${normalizedInputOtp}'`);
-            console.log(`DEBUG: Normalized Stored: '${normalizedStoredOtp}'`);
-
+        if (!storedOtp || storedOtp !== otp) {
             return res.status(400).json({
                 success: false,
                 message: "Invalid or expired OTP",
@@ -703,11 +709,7 @@ export const verifyOTPAndResetPassword = async (req, res) => {
         // Verify OTP from Redis
         const storedOtp = await redis.get(`admin_reset_otp:${email}`);
 
-        // Normalize values for comparison
-        const normalizedInputOtp = String(otp).trim();
-        const normalizedStoredOtp = String(storedOtp).trim();
-
-        if (!normalizedStoredOtp || normalizedStoredOtp !== normalizedInputOtp) {
+        if (!storedOtp || storedOtp !== otp) {
             return res.status(400).json({
                 success: false,
                 message: "Invalid or expired OTP",

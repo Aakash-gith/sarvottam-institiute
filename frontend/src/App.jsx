@@ -10,6 +10,9 @@ import {
   events,
   notes,
   subjectNotes,
+  physicsChapters,
+  notesChapter,
+  notesViewer,
   pyq,
   quiz,
   quizCreate,
@@ -32,6 +35,7 @@ const Auth = React.lazy(() => import("./pages/Auth"));
 const Events = React.lazy(() => import("./pages/Events"));
 const Notes = React.lazy(() => import("./pages/Notes"));
 const SubjectNotes = React.lazy(() => import("./pages/SubjectNotes"));
+const NotesPage = React.lazy(() => import("./pages/NotesPage"));
 const PYQ = React.lazy(() => import("./pages/PYQ"));
 const Quiz = React.lazy(() => import("./pages/Quiz"));
 const Profile = React.lazy(() => import("./pages/Profile"));
@@ -44,6 +48,8 @@ const CreateQuiz = React.lazy(() => import("./components/quiz/CreateQuiz"));
 const TakeQuiz = React.lazy(() => import("./components/quiz/TakeQuiz"));
 const QuizResults = React.lazy(() => import("./components/quiz/QuizResults"));
 const QuizHistory = React.lazy(() => import("./components/quiz/QuizHistory"));
+const PhysicsChapters = React.lazy(() => import("./components/notes/PhysicsChapters"));
+const NotesViewer = React.lazy(() => import("./components/notes/NotesViewer"));
 
 import ProtectedRoute from "./components/ProtectedRoute";
 import { Skeleton } from "./components/Skeleton"; // Use our new Skeleton component
@@ -74,6 +80,9 @@ function App() {
           <Route path={events} element={<ProtectedRoute><Events /></ProtectedRoute>} />
           <Route path={notes} element={<ProtectedRoute><Notes /></ProtectedRoute>} />
           <Route path={subjectNotes} element={<ProtectedRoute><SubjectNotes /></ProtectedRoute>} />
+          <Route path={physicsChapters} element={<ProtectedRoute><PhysicsChapters /></ProtectedRoute>} />
+          <Route path={notesChapter} element={<ProtectedRoute><NotesPage /></ProtectedRoute>} />
+          <Route path={notesViewer} element={<ProtectedRoute><NotesViewer /></ProtectedRoute>} />
           <Route path={pyq} element={<ProtectedRoute><PYQ /></ProtectedRoute>} />
           <Route path={quiz} element={<ProtectedRoute><Quiz /></ProtectedRoute>} />
           <Route path={quizCreate} element={<ProtectedRoute><CreateQuiz /></ProtectedRoute>} />
