@@ -4,24 +4,24 @@ import mongoose from "mongoose";
 // Get all notes/videos/quizzes for a subject
 export const getSubjectContent = async (req, res) => {
   try {
-    const { subjectId, semesterId } = req.query;
+    const { subjectId, classId } = req.query;
 
-    if (!subjectId || !semesterId) {
+    if (!subjectId || !classId) {
       return res
         .status(400)
-        .json({ message: "Subject ID and Semester ID required" });
+        .json({ message: "Subject ID and Class ID required" });
     }
 
     let content = await SubjectNotes.findOne({
       subjectId: parseInt(subjectId),
-      semesterId: parseInt(semesterId),
+      classId: parseInt(classId),
     });
 
     // Return empty structure if not found
     if (!content) {
       content = {
         subjectId: parseInt(subjectId),
-        semesterId: parseInt(semesterId),
+        classId: parseInt(classId),
         notes: [],
         videos: [],
         quizzes: [],
@@ -39,26 +39,48 @@ export const getSubjectContent = async (req, res) => {
 // ADMIN ONLY OPERATIONS
 // ============================================
 
+// Upload file for note
+export const uploadNoteFile = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: "No file uploaded" });
+    }
+
+    // Construct public URL
+    // Assuming 'uploads' is served statically
+    const fileUrl = `/uploads/notes/${req.file.filename}`;
+
+    res.json({
+      success: true,
+      fileUrl: fileUrl,
+      fileName: req.file.originalname
+    });
+  } catch (error) {
+    console.error("Upload note file error:", error);
+    res.status(500).json({ message: "Error uploading file" });
+  }
+};
+
 export const addNote = async (req, res) => {
   try {
-    const { subjectId, semesterId, title, description, fileType, fileUrl } =
+    const { subjectId, classId, title, description, fileType, fileUrl } =
       req.body;
 
-    if (!subjectId || !semesterId || !title || !fileUrl) {
+    if (!subjectId || !classId || !title || !fileUrl) {
       return res.status(400).json({
-        message: "Subject ID, Semester ID, title, and fileUrl required",
+        message: "Subject ID, Class ID, title, and fileUrl required",
       });
     }
 
     let content = await SubjectNotes.findOne({
       subjectId: parseInt(subjectId),
-      semesterId: parseInt(semesterId),
+      classId: parseInt(classId),
     });
 
     if (!content) {
       content = new SubjectNotes({
         subjectId: parseInt(subjectId),
-        semesterId: parseInt(semesterId),
+        classId: parseInt(classId),
         notes: [],
         videos: [],
         quizzes: [],
@@ -89,24 +111,24 @@ export const addNote = async (req, res) => {
 
 export const addVideo = async (req, res) => {
   try {
-    const { subjectId, semesterId, title, description, youtubeUrl, duration } =
+    const { subjectId, classId, title, description, youtubeUrl, duration } =
       req.body;
 
-    if (!subjectId || !semesterId || !title || !youtubeUrl) {
+    if (!subjectId || !classId || !title || !youtubeUrl) {
       return res.status(400).json({
-        message: "Subject ID, Semester ID, title, and youtubeUrl required",
+        message: "Subject ID, Class ID, title, and youtubeUrl required",
       });
     }
 
     let content = await SubjectNotes.findOne({
       subjectId: parseInt(subjectId),
-      semesterId: parseInt(semesterId),
+      classId: parseInt(classId),
     });
 
     if (!content) {
       content = new SubjectNotes({
         subjectId: parseInt(subjectId),
-        semesterId: parseInt(semesterId),
+        classId: parseInt(classId),
         notes: [],
         videos: [],
         quizzes: [],
@@ -137,23 +159,23 @@ export const addVideo = async (req, res) => {
 
 export const addQuiz = async (req, res) => {
   try {
-    const { subjectId, semesterId, title, description, quizId } = req.body;
+    const { subjectId, classId, title, description, quizId } = req.body;
 
-    if (!subjectId || !semesterId || !title) {
+    if (!subjectId || !classId || !title) {
       return res.status(400).json({
-        message: "Subject ID, Semester ID, and title required",
+        message: "Subject ID, Class ID, and title required",
       });
     }
 
     let content = await SubjectNotes.findOne({
       subjectId: parseInt(subjectId),
-      semesterId: parseInt(semesterId),
+      classId: parseInt(classId),
     });
 
     if (!content) {
       content = new SubjectNotes({
         subjectId: parseInt(subjectId),
-        semesterId: parseInt(semesterId),
+        classId: parseInt(classId),
         notes: [],
         videos: [],
         quizzes: [],
@@ -183,19 +205,19 @@ export const addQuiz = async (req, res) => {
 
 export const updateNote = async (req, res) => {
   try {
-    const { subjectId, semesterId, noteId, title, description, fileUrl } =
+    const { subjectId, classId, noteId, title, description, fileUrl } =
       req.body;
 
-    if (!subjectId || !semesterId || !noteId) {
+    if (!subjectId || !classId || !noteId) {
       return res.status(400).json({
-        message: "Subject ID, Semester ID, and Note ID required",
+        message: "Subject ID, Class ID, and Note ID required",
       });
     }
 
     const content = await SubjectNotes.findOneAndUpdate(
       {
         subjectId: parseInt(subjectId),
-        semesterId: parseInt(semesterId),
+        classId: parseInt(classId),
         "notes._id": noteId,
       },
       {
@@ -226,19 +248,19 @@ export const updateNote = async (req, res) => {
 
 export const updateVideo = async (req, res) => {
   try {
-    const { subjectId, semesterId, videoId, title, description, youtubeUrl, duration } =
+    const { subjectId, classId, videoId, title, description, youtubeUrl, duration } =
       req.body;
 
-    if (!subjectId || !semesterId || !videoId) {
+    if (!subjectId || !classId || !videoId) {
       return res.status(400).json({
-        message: "Subject ID, Semester ID, and Video ID required",
+        message: "Subject ID, Class ID, and Video ID required",
       });
     }
 
     const content = await SubjectNotes.findOneAndUpdate(
       {
         subjectId: parseInt(subjectId),
-        semesterId: parseInt(semesterId),
+        classId: parseInt(classId),
         "videos._id": videoId,
       },
       {
@@ -270,18 +292,18 @@ export const updateVideo = async (req, res) => {
 
 export const deleteNote = async (req, res) => {
   try {
-    const { subjectId, semesterId, noteId } = req.body;
+    const { subjectId, classId, noteId } = req.body;
 
-    if (!subjectId || !semesterId || !noteId) {
+    if (!subjectId || !classId || !noteId) {
       return res.status(400).json({
-        message: "Subject ID, Semester ID, and Note ID required",
+        message: "Subject ID, Class ID, and Note ID required",
       });
     }
 
     const content = await SubjectNotes.findOneAndUpdate(
       {
         subjectId: parseInt(subjectId),
-        semesterId: parseInt(semesterId),
+        classId: parseInt(classId),
       },
       { $pull: { notes: { _id: noteId } } },
       { new: true }
@@ -302,18 +324,18 @@ export const deleteNote = async (req, res) => {
 
 export const deleteVideo = async (req, res) => {
   try {
-    const { subjectId, semesterId, videoId } = req.body;
+    const { subjectId, classId, videoId } = req.body;
 
-    if (!subjectId || !semesterId || !videoId) {
+    if (!subjectId || !classId || !videoId) {
       return res.status(400).json({
-        message: "Subject ID, Semester ID, and Video ID required",
+        message: "Subject ID, Class ID, and Video ID required",
       });
     }
 
     const content = await SubjectNotes.findOneAndUpdate(
       {
         subjectId: parseInt(subjectId),
-        semesterId: parseInt(semesterId),
+        classId: parseInt(classId),
       },
       { $pull: { videos: { _id: videoId } } },
       { new: true }
@@ -334,18 +356,18 @@ export const deleteVideo = async (req, res) => {
 
 export const deleteQuiz = async (req, res) => {
   try {
-    const { subjectId, semesterId, quizId } = req.body;
+    const { subjectId, classId, quizId } = req.body;
 
-    if (!subjectId || !semesterId || !quizId) {
+    if (!subjectId || !classId || !quizId) {
       return res.status(400).json({
-        message: "Subject ID, Semester ID, and Quiz ID required",
+        message: "Subject ID, Class ID, and Quiz ID required",
       });
     }
 
     const content = await SubjectNotes.findOneAndUpdate(
       {
         subjectId: parseInt(subjectId),
-        semesterId: parseInt(semesterId),
+        classId: parseInt(classId),
       },
       { $pull: { quizzes: { _id: quizId } } },
       { new: true }

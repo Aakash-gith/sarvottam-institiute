@@ -7,11 +7,11 @@ const subjectNotesSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    semesterId: {
+    classId: {
       type: Number,
       required: true,
       min: 1,
-      max: 8,
+      max: 12,
     },
     notes: [
       {
@@ -29,7 +29,7 @@ const subjectNotesSchema = new mongoose.Schema(
           default: "pdf",
         },
         fileUrl: {
-          type: String, 
+          type: String,
           required: true,
         },
         uploadedAt: {
@@ -53,7 +53,7 @@ const subjectNotesSchema = new mongoose.Schema(
           required: true,
         },
         duration: {
-          type: String, 
+          type: String,
         },
         uploadedAt: {
           type: Date,
@@ -86,7 +86,7 @@ const subjectNotesSchema = new mongoose.Schema(
 );
 
 subjectNotesSchema.index(
-  { subjectId: 1, semesterId: 1 },
+  { subjectId: 1, classId: 1 },
   { unique: true }
 );
 
