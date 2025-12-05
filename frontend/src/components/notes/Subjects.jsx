@@ -4,7 +4,7 @@ import {
   fetchSubjectProgress,
   initClassProgress,
 } from "../../classData";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { BookOpen, Video, ChevronRight, TrendingUp, ArrowLeft } from "lucide-react";
 
 function Subjects() {
@@ -12,6 +12,7 @@ function Subjects() {
   const [loading, setLoading] = useState(true);
   const [selectedSubject, setSelectedSubject] = useState(null);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const studentId = useMemo(() => {
     if (typeof window !== "undefined") {
@@ -38,6 +39,19 @@ function Subjects() {
     }
     return 9;
   }, []);
+
+  // Handle back navigation from sub-subjects
+  useEffect(() => {
+    if (location.state?.selectedSubjectId) {
+      const subjects = classData[currentClass]?.subjects || [];
+      const subjectToSelect = subjects.find(s => s.id === location.state.selectedSubjectId);
+      if (subjectToSelect) {
+        setSelectedSubject(subjectToSelect);
+        // Clear state to prevent stuck navigation
+        window.history.replaceState({}, document.title);
+      }
+    }
+  }, [location.state, currentClass]);
 
   useEffect(() => {
     const loadSubjectProgress = async () => {
